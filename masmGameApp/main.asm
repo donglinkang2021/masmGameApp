@@ -20,12 +20,11 @@ includelib user32.lib
 	;------------------------------------------
 	WinMain PROC
 		invoke MessageBox, NULL,addr MsgBoxText, addr MsgCaption, MB_OK
+		ret
 	WinMain ENDP
 
 
-	main PROC
+	main:
 		call WinMain
 		invoke ExitProcess,NULL
-		ret ; return to operating system, else stack will be corrupted
-	main ENDP
 	end main
