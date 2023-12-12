@@ -142,8 +142,11 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\material\MicrosoftEdge-SURF\demo\background.bmp" />
     <Image Include="bitmap1.bmp" />
     <Image Include="icon1.ico" />
+    <Image Include="source\background.bmp" />
+    <Image Include="source\bitmap2.bmp" />
     <Image Include="source\player_0_2.bmp" />
     <Image Include="source\player_mask_0_2.bmp" />
   </ItemGroup>
