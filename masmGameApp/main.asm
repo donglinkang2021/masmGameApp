@@ -16,6 +16,9 @@ includelib user32.lib
 	hInstance dword ? 	;程序的句柄
 	hWinMain dword ?	;窗体的句柄
 
+.const
+	IDI_ICON1 equ 102 	;图标的ID
+
 .code
 
 	;------------------------------------------
@@ -51,7 +54,7 @@ includelib user32.lib
 		invoke	RtlZeroMemory,addr @stWndClass,sizeof @stWndClass
 		invoke	LoadCursor,0,IDC_ARROW
 		mov	@stWndClass.hCursor,eax
-		invoke LoadIcon, hInstance, 102; 
+		invoke LoadIcon, hInstance, IDI_ICON1 
 		mov	@stWndClass.hIcon,eax
 		mov	@stWndClass.hIconSm,eax
 		push hInstance
