@@ -51,5 +51,14 @@
     <Image Include="source\background.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="source\test.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard_mask_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

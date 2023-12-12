@@ -23,6 +23,10 @@ includelib gdi32.lib
 	; bitmap
 	hBmpTest dd ?		;测试图片的句柄
 	hBmpBack dd ?		;背景图片的句柄
+	hBmpPlayer02 dd ?	;玩家图片的句柄
+	hBmpPlayer02M dd ?	;玩家图片的MASK句柄
+	hBmpSurfboard02 dd ?	;冲浪板图片的句柄
+	hBmpSurfboard02M dd ?	;冲浪板图片的MASK句柄
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -41,6 +45,10 @@ includelib gdi32.lib
 	IDI_ICON1 equ 102 	;图标的ID
 	IDB_TEST equ 103 	;测试图片的ID
 	IDB_BACK equ 104 	;背景图片的ID
+	IDB_PLAYER02 equ 105 	;玩家2的图片的ID
+	IDB_PLAYER02M equ 106 	;玩家2的图片的MASK
+	IDB_SURFBOARD02 equ 107 	;冲浪板的图片的ID
+	IDB_SURFBOARD02M equ 108 	;冲浪板的图片的MASK
 
 .code
 
@@ -54,6 +62,14 @@ includelib gdi32.lib
 		mov hBmpTest, eax
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYER02
+		mov hBmpPlayer02, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYER02M
+		mov hBmpPlayer02M, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBOARD02
+		mov hBmpSurfboard02, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBOARD02M
+		mov hBmpSurfboard02M, eax
 		ret
 	LoadAllBmp ENDP
 
@@ -66,6 +82,10 @@ includelib gdi32.lib
 	DeleteBmp PROC
 		invoke DeleteObject, hBmpTest
 		invoke DeleteObject, hBmpBack
+		invoke DeleteObject, hBmpPlayer02
+		invoke DeleteObject, hBmpPlayer02M
+		invoke DeleteObject, hBmpSurfboard02
+		invoke DeleteObject, hBmpSurfboard02M
 		ret
 	DeleteBmp ENDP
 
@@ -185,7 +205,12 @@ includelib gdi32.lib
 			; 这里之后实现动态波浪移动
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke Bmp2Buffer, hBmpTest, 376, 276, 48, 48, SRCCOPY
+			; invoke Bmp2Buffer, hBmpTest, 376, 276, 48, 48, SRCCOPY
+			invoke Bmp2Buffer, hBmpSurfboard02M, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpSurfboard02, 368, 268, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpPlayer02M, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpPlayer02, 368, 268, 64, 64, SRCPAINT
+			
 			invoke Buffer2Window
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		

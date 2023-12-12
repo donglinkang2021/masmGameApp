@@ -149,6 +149,9 @@
     <Image Include="source\bitmap2.bmp" />
     <Image Include="source\player_0_2.bmp" />
     <Image Include="source\player_mask_0_2.bmp" />
+    <Image Include="source\surfboard_0_2.bmp" />
+    <Image Include="source\surfboard_mask_0_2.bmp" />
+    <Image Include="source\test.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
