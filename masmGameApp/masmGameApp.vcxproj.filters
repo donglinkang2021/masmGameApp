@@ -33,5 +33,14 @@
     <Image Include="icon1.ico">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="source\player_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player_mask_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="bitmap1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>
