@@ -48,58 +48,14 @@ includelib gdi32.lib
 	; 后面看能不能把这一段优化成数组的形式
 	; 可以思考，这一个就是一个13x4的int数组存储就可以了
 	; 后面的动画就是板子对应的更新，再说
-	hBmpPlayer00 dd ?	
-	hBmpPlayerM00 dd ?	
-	hBmpSurfB00 dd ?	
-	hBmpSurfBM00 dd ?
-	hBmpPlayer01 dd ?	
-	hBmpPlayerM01 dd ?	
-	hBmpSurfB01 dd ?	
-	hBmpSurfBM01 dd ?
-	hBmpPlayer02 dd ?	
-	hBmpPlayerM02 dd ?	
-	hBmpSurfB02 dd ?	
-	hBmpSurfBM02 dd ?
-	hBmpPlayer03 dd ?	
-	hBmpPlayerM03 dd ?	
-	hBmpSurfB03 dd ?	
-	hBmpSurfBM03 dd ?
-	hBmpPlayer04 dd ?	
-	hBmpPlayerM04 dd ?	
-	hBmpSurfB04 dd ?	
-	hBmpSurfBM04 dd ?
-	hBmpPlayer05 dd ?	
-	hBmpPlayerM05 dd ?	
-	hBmpSurfB05 dd ?	
-	hBmpSurfBM05 dd ?
-	hBmpPlayer06 dd ?	
-	hBmpPlayerM06 dd ?	
-	hBmpSurfB06 dd ?	
-	hBmpSurfBM06 dd ?
-	hBmpPlayer07 dd ?
-	hBmpPlayerM07 dd ?
-	hBmpSurfB07 dd ?
-	hBmpSurfBM07 dd ?
-	hBmpPlayer08 dd ?
-	hBmpPlayerM08 dd ?
-	hBmpSurfB08 dd ?
-	hBmpSurfBM08 dd ?
-	hBmpPlayer09 dd ?
-	hBmpPlayerM09 dd ?
-	hBmpSurfB09 dd ?
-	hBmpSurfBM09 dd ?
-	hBmpPlayer010 dd ?
-	hBmpPlayerM010 dd ?
-	hBmpSurfB010 dd ?
-	hBmpSurfBM010 dd ?
-	hBmpPlayer011 dd ?
-	hBmpPlayerM011 dd ?
-	hBmpSurfB011 dd ?
-	hBmpSurfBM011 dd ?
-	hBmpPlayer012 dd ?
-	hBmpPlayerM012 dd ?
-	hBmpSurfB012 dd ?
-	hBmpSurfBM012 dd ?		
+	SurferHandle struct
+		Player dd ?		;当前玩家图片的句柄
+		PlayerM dd ?	;当前玩家图片的句柄
+		SurfB dd ?		;当前玩家图片的句柄
+		SurfBM dd ?		;当前玩家图片的句柄
+	SurferHandle ends
+
+	surfers SurferHandle 13 dup(<?,?,?,?>)	
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -181,133 +137,149 @@ includelib gdi32.lib
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
 
+		mov edi, offset surfers
+
 		invoke LoadBitmap, hInstance, IDB_PLAYER00
-		mov hBmpPlayer00, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM00
-		mov hBmpPlayerM00, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB00
-		mov hBmpSurfB00, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM00
-		mov hBmpSurfBM00, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER01
-		mov hBmpPlayer01, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM01
-		mov hBmpPlayerM01, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB01
-		mov hBmpSurfB01, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM01
-		mov hBmpSurfBM01, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER02
-		mov hBmpPlayer02, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM02
-		mov hBmpPlayerM02, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB02
-		mov hBmpSurfB02, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM02
-		mov hBmpSurfBM02, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER03
-		mov hBmpPlayer03, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM03
-		mov hBmpPlayerM03, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB03
-		mov hBmpSurfB03, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM03
-		mov hBmpSurfBM03, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER04
-		mov hBmpPlayer04, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM04
-		mov hBmpPlayerM04, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB04
-		mov hBmpSurfB04, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM04
-		mov hBmpSurfBM04, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER05
-		mov hBmpPlayer05, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM05
-		mov hBmpPlayerM05, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB05
-		mov hBmpSurfB05, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM05
-		mov hBmpSurfBM05, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER06
-		mov hBmpPlayer06, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM06
-		mov hBmpPlayerM06, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB06
-		mov hBmpSurfB06, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM06
-		mov hBmpSurfBM06, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER07
-		mov hBmpPlayer07, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM07
-		mov hBmpPlayerM07, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB07
-		mov hBmpSurfB07, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM07
-		mov hBmpSurfBM07, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER08
-		mov hBmpPlayer08, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM08
-		mov hBmpPlayerM08, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB08
-		mov hBmpSurfB08, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM08
-		mov hBmpSurfBM08, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER09
-		mov hBmpPlayer09, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM09
-		mov hBmpPlayerM09, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB09
-		mov hBmpSurfB09, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM09
-		mov hBmpSurfBM09, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER010
-		mov hBmpPlayer010, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM010
-		mov hBmpPlayerM010, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB010
-		mov hBmpSurfB010, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM010
-		mov hBmpSurfBM010, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER011
-		mov hBmpPlayer011, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM011
-		mov hBmpPlayerM011, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB011
-		mov hBmpSurfB011, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM011
-		mov hBmpSurfBM011, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER012
-		mov hBmpPlayer012, eax
+		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM012
-		mov hBmpPlayerM012, eax
+		mov (SurferHandle PTR [edi]).PlayerM, eax
 		invoke LoadBitmap, hInstance, IDB_SURFB012
-		mov hBmpSurfB012, eax
+		mov (SurferHandle PTR [edi]).SurfB, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM012
-		mov hBmpSurfBM012, eax
+		mov (SurferHandle PTR [edi]).SurfBM, eax
+		add edi, TYPE SurferHandle
 
 		; 初始化player和surfB的图片, 之后初始化为00
-		mov eax, hBmpPlayer00
+		mov edi, offset surfers
+		mov eax, (SurferHandle PTR [edi]).Player
 		mov hBmpPlayer, eax
-		mov eax, hBmpPlayerM00
+		mov eax, (SurferHandle PTR [edi]).PlayerM
 		mov hBmpPlayerM, eax
-		mov eax, hBmpSurfB00
+		mov eax, (SurferHandle PTR [edi]).SurfB
 		mov hBmpSurfB, eax
-		mov eax, hBmpSurfBM00
+		mov eax, (SurferHandle PTR [edi]).SurfBM
 		mov hBmpSurfBM, eax
-
+		
 		ret
 	LoadAllBmp ENDP
 
@@ -319,59 +291,16 @@ includelib gdi32.lib
 	;------------------------------------------
 	DeleteBmp PROC
 		invoke DeleteObject, hBmpBack
-		invoke DeleteObject, hBmpPlayer00
-		invoke DeleteObject, hBmpPlayerM00
-		invoke DeleteObject, hBmpSurfB00
-		invoke DeleteObject, hBmpSurfBM00
-		invoke DeleteObject, hBmpPlayer01
-		invoke DeleteObject, hBmpPlayerM01
-		invoke DeleteObject, hBmpSurfB01
-		invoke DeleteObject, hBmpSurfBM01
-		invoke DeleteObject, hBmpPlayer02
-		invoke DeleteObject, hBmpPlayerM02
-		invoke DeleteObject, hBmpSurfB02
-		invoke DeleteObject, hBmpSurfBM02
-		invoke DeleteObject, hBmpPlayer03
-		invoke DeleteObject, hBmpPlayerM03
-		invoke DeleteObject, hBmpSurfB03
-		invoke DeleteObject, hBmpSurfBM03
-		invoke DeleteObject, hBmpPlayer04
-		invoke DeleteObject, hBmpPlayerM04
-		invoke DeleteObject, hBmpSurfB04
-		invoke DeleteObject, hBmpSurfBM04
-		invoke DeleteObject, hBmpPlayer05
-		invoke DeleteObject, hBmpPlayerM05
-		invoke DeleteObject, hBmpSurfB05
-		invoke DeleteObject, hBmpSurfBM05
-		invoke DeleteObject, hBmpPlayer06
-		invoke DeleteObject, hBmpPlayerM06
-		invoke DeleteObject, hBmpSurfB06
-		invoke DeleteObject, hBmpSurfBM06
-		invoke DeleteObject, hBmpPlayer07
-		invoke DeleteObject, hBmpPlayerM07
-		invoke DeleteObject, hBmpSurfB07
-		invoke DeleteObject, hBmpSurfBM07
-		invoke DeleteObject, hBmpPlayer08
-		invoke DeleteObject, hBmpPlayerM08
-		invoke DeleteObject, hBmpSurfB08
-		invoke DeleteObject, hBmpSurfBM08
-		invoke DeleteObject, hBmpPlayer09
-		invoke DeleteObject, hBmpPlayerM09
-		invoke DeleteObject, hBmpSurfB09
-		invoke DeleteObject, hBmpSurfBM09
-		invoke DeleteObject, hBmpPlayer010
-		invoke DeleteObject, hBmpPlayerM010
-		invoke DeleteObject, hBmpSurfB010
-		invoke DeleteObject, hBmpSurfBM010
-		invoke DeleteObject, hBmpPlayer011
-		invoke DeleteObject, hBmpPlayerM011
-		invoke DeleteObject, hBmpSurfB011
-		invoke DeleteObject, hBmpSurfBM011
-		invoke DeleteObject, hBmpPlayer012
-		invoke DeleteObject, hBmpPlayerM012
-		invoke DeleteObject, hBmpSurfB012
-		invoke DeleteObject, hBmpSurfBM012
-
+		mov edi, offset surfers
+		mov esi, 0
+		.while esi < 13
+			invoke DeleteObject, (SurferHandle PTR [edi]).Player
+			invoke DeleteObject, (SurferHandle PTR [edi]).PlayerM
+			invoke DeleteObject, (SurferHandle PTR [edi]).SurfB
+			invoke DeleteObject, (SurferHandle PTR [edi]).SurfBM
+			add edi, TYPE SurferHandle
+			inc esi
+		.endw
 		ret
 	DeleteBmp ENDP
 
@@ -476,125 +405,19 @@ includelib gdi32.lib
 	; UpdateActionBmp - 更新动作bmp的句柄
 	;------------------------------------------
 	UpdateActionBmp PROC
-		.if player_action == 0
-			; 之后这里要改成 00
-			mov eax, hBmpSurfBM00
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB00
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM00
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer00
-			mov hBmpPlayer, eax
-		.elseif player_action == 1
-			mov eax, hBmpSurfBM01
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB01
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM01
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer01
-			mov hBmpPlayer, eax
-		.elseif player_action == 2
-			mov eax, hBmpSurfBM02
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB02
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM02
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer02
-			mov hBmpPlayer, eax
-		.elseif player_action == 3
-			mov eax, hBmpSurfBM03
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB03
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM03
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer03
-			mov hBmpPlayer, eax
-		.elseif player_action == 4
-			mov eax, hBmpSurfBM04
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB04
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM04
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer04
-			mov hBmpPlayer, eax
-		.elseif player_action == 5
-			mov eax, hBmpSurfBM05
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB05
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM05
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer05
-			mov hBmpPlayer, eax
-		.elseif player_action == 6
-			mov eax, hBmpSurfBM06
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB06
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM06
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer06
-			mov hBmpPlayer, eax
-		.elseif player_action == 7
-			mov eax, hBmpSurfBM07
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB07
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM07
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer07
-			mov hBmpPlayer, eax
-		.elseif player_action == 8
-			mov eax, hBmpSurfBM08
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB08
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM08
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer08
-			mov hBmpPlayer, eax
-		.elseif player_action == 9
-			mov eax, hBmpSurfBM09
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB09
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM09
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer09
-			mov hBmpPlayer, eax
-		.elseif player_action == 10
-			mov eax, hBmpSurfBM010
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB010
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM010
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer010
-			mov hBmpPlayer, eax
-		.elseif player_action == 11
-			mov eax, hBmpSurfBM011
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB011
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM011
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer011
-			mov hBmpPlayer, eax
-		.elseif player_action == 12
-			mov eax, hBmpSurfBM012
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB012
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM012
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer012
-			mov hBmpPlayer, eax
-		.endif
+		mov edi, offset surfers
+		mov esi, player_action
+		imul esi, TYPE SurferHandle
+		add edi, esi
+
+		mov eax, (SurferHandle PTR [edi]).Player
+		mov hBmpPlayer, eax
+		mov eax, (SurferHandle PTR [edi]).PlayerM
+		mov hBmpPlayerM, eax
+		mov eax, (SurferHandle PTR [edi]).SurfB
+		mov hBmpSurfB, eax
+		mov eax, (SurferHandle PTR [edi]).SurfBM
+		mov hBmpSurfBM, eax
 		ret
 	UpdateActionBmp ENDP
 	
