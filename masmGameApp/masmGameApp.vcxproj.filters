@@ -25,7 +25,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc">
+    <ResourceCompile Include="masmGameApp.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -33,31 +33,67 @@
     <Image Include="icon1.ico">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="source\player_0_2.bmp">
+    <Image Include="source\player64\player_0_1.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="source\player_mask_0_2.bmp">
+    <Image Include="source\player64\player_0_2.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="bitmap1.bmp">
+    <Image Include="source\player64\player_0_3.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="..\..\..\material\MicrosoftEdge-SURF\demo\background.bmp">
+    <Image Include="source\player64\player_0_4.bmp">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="source\bitmap2.bmp">
+    <Image Include="source\player64\player_0_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player64_mask\player_mask_0_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player64_mask\player_mask_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player64_mask\player_mask_0_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player64_mask\player_mask_0_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\player64_mask\player_mask_0_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_0_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_0_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_0_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_0_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_5.bmp">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="source\background.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="source\test.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="source\surfboard_0_2.bmp">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="source\surfboard_mask_0_2.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

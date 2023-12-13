@@ -23,10 +23,26 @@ includelib gdi32.lib
 	; bitmap
 	hBmpTest dd ?		;测试图片的句柄
 	hBmpBack dd ?		;背景图片的句柄
-	hBmpPlayer02 dd ?	;玩家图片的句柄
-	hBmpPlayer02M dd ?	;玩家图片的MASK句柄
-	hBmpSurfboard02 dd ?	;冲浪板图片的句柄
-	hBmpSurfboard02M dd ?	;冲浪板图片的MASK句柄
+	hBmpPlayer01 dd ?	
+	hBmpPlayerM01 dd ?	
+	hBmpSurfB01 dd ?	
+	hBmpSurfBM01 dd ?
+	hBmpPlayer02 dd ?	
+	hBmpPlayerM02 dd ?	
+	hBmpSurfB02 dd ?	
+	hBmpSurfBM02 dd ?
+	hBmpPlayer03 dd ?	
+	hBmpPlayerM03 dd ?	
+	hBmpSurfB03 dd ?	
+	hBmpSurfBM03 dd ?
+	hBmpPlayer04 dd ?	
+	hBmpPlayerM04 dd ?	
+	hBmpSurfB04 dd ?	
+	hBmpSurfBM04 dd ?
+	hBmpPlayer05 dd ?	
+	hBmpPlayerM05 dd ?	
+	hBmpSurfB05 dd ?	
+	hBmpSurfBM05 dd ?	
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -42,13 +58,28 @@ includelib gdi32.lib
 .const
 	MyWinClass   db "Simple Win Class",0
 	AppName      db "My First Window",0
-	IDI_ICON1 equ 102 	;图标的ID
-	IDB_TEST equ 103 	;测试图片的ID
-	IDB_BACK equ 104 	;背景图片的ID
-	IDB_PLAYER02 equ 105 	;玩家2的图片的ID
-	IDB_PLAYER02M equ 106 	;玩家2的图片的MASK
-	IDB_SURFBOARD02 equ 107 	;冲浪板的图片的ID
-	IDB_SURFBOARD02M equ 108 	;冲浪板的图片的MASK
+	IDI_ICON1 equ 101 	;图标的ID
+	IDB_PLAYER01 equ 102
+	IDB_PLAYER02 equ 103
+	IDB_PLAYER03 equ 104
+	IDB_PLAYER04 equ 105
+	IDB_PLAYER05 equ 106
+	IDB_PLAYERM01 equ 107
+	IDB_PLAYERM02 equ 108
+	IDB_PLAYERM03 equ 109
+	IDB_PLAYERM04 equ 110
+	IDB_PLAYERM05 equ 111
+	IDB_SURFB01 equ 112
+	IDB_SURFB02 equ 113
+	IDB_SURFB03 equ 114
+	IDB_SURFB04 equ 115
+	IDB_SURFB05 equ 116
+	IDB_SURFBM01 equ 117
+	IDB_SURFBM02 equ 118
+	IDB_SURFBM03 equ 119
+	IDB_SURFBM04 equ 120
+	IDB_SURFBM05 equ 121
+	IDB_BACK equ 122
 
 .code
 
@@ -58,18 +89,54 @@ includelib gdi32.lib
 	; @return void
 	;------------------------------------------
 	LoadAllBmp PROC
-		invoke LoadBitmap, hInstance, IDB_TEST
-		mov hBmpTest, eax
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER01
+		mov hBmpPlayer01, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM01
+		mov hBmpPlayerM01, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB01
+		mov hBmpSurfB01, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM01
+		mov hBmpSurfBM01, eax
+
 		invoke LoadBitmap, hInstance, IDB_PLAYER02
 		mov hBmpPlayer02, eax
-		invoke LoadBitmap, hInstance, IDB_PLAYER02M
-		mov hBmpPlayer02M, eax
-		invoke LoadBitmap, hInstance, IDB_SURFBOARD02
-		mov hBmpSurfboard02, eax
-		invoke LoadBitmap, hInstance, IDB_SURFBOARD02M
-		mov hBmpSurfboard02M, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM02
+		mov hBmpPlayerM02, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB02
+		mov hBmpSurfB02, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM02
+		mov hBmpSurfBM02, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER03
+		mov hBmpPlayer03, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM03
+		mov hBmpPlayerM03, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB03
+		mov hBmpSurfB03, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM03
+		mov hBmpSurfBM03, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER04
+		mov hBmpPlayer04, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM04
+		mov hBmpPlayerM04, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB04
+		mov hBmpSurfB04, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM04
+		mov hBmpSurfBM04, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER05
+		mov hBmpPlayer05, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM05
+		mov hBmpPlayerM05, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB05
+		mov hBmpSurfB05, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM05
+		mov hBmpSurfBM05, eax
+
 		ret
 	LoadAllBmp ENDP
 
@@ -80,12 +147,27 @@ includelib gdi32.lib
 	; @return void
 	;------------------------------------------
 	DeleteBmp PROC
-		invoke DeleteObject, hBmpTest
 		invoke DeleteObject, hBmpBack
+		invoke DeleteObject, hBmpPlayer01
+		invoke DeleteObject, hBmpPlayerM01
+		invoke DeleteObject, hBmpSurfB01
+		invoke DeleteObject, hBmpSurfBM01
 		invoke DeleteObject, hBmpPlayer02
-		invoke DeleteObject, hBmpPlayer02M
-		invoke DeleteObject, hBmpSurfboard02
-		invoke DeleteObject, hBmpSurfboard02M
+		invoke DeleteObject, hBmpPlayerM02
+		invoke DeleteObject, hBmpSurfB02
+		invoke DeleteObject, hBmpSurfBM02
+		invoke DeleteObject, hBmpPlayer03
+		invoke DeleteObject, hBmpPlayerM03
+		invoke DeleteObject, hBmpSurfB03
+		invoke DeleteObject, hBmpSurfBM03
+		invoke DeleteObject, hBmpPlayer04
+		invoke DeleteObject, hBmpPlayerM04
+		invoke DeleteObject, hBmpSurfB04
+		invoke DeleteObject, hBmpSurfBM04
+		invoke DeleteObject, hBmpPlayer05
+		invoke DeleteObject, hBmpPlayerM05
+		invoke DeleteObject, hBmpSurfB05
+		invoke DeleteObject, hBmpSurfBM05
 		ret
 	DeleteBmp ENDP
 
@@ -205,11 +287,10 @@ includelib gdi32.lib
 			; 这里之后实现动态波浪移动
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			; invoke Bmp2Buffer, hBmpTest, 376, 276, 48, 48, SRCCOPY
-			invoke Bmp2Buffer, hBmpSurfboard02M, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpSurfboard02, 368, 268, 64, 64, SRCPAINT
-			invoke Bmp2Buffer, hBmpPlayer02M, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpPlayer02, 368, 268, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpSurfBM01, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpSurfB01, 368, 268, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpPlayerM01, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpPlayer01, 368, 268, 64, 64, SRCPAINT
 			
 			invoke Buffer2Window
 		.else

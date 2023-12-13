@@ -139,19 +139,31 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
+    <ResourceCompile Include="masmGameApp.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\material\MicrosoftEdge-SURF\demo\background.bmp" />
-    <Image Include="bitmap1.bmp" />
     <Image Include="icon1.ico" />
     <Image Include="source\background.bmp" />
-    <Image Include="source\bitmap2.bmp" />
-    <Image Include="source\player_0_2.bmp" />
-    <Image Include="source\player_mask_0_2.bmp" />
-    <Image Include="source\surfboard_0_2.bmp" />
-    <Image Include="source\surfboard_mask_0_2.bmp" />
-    <Image Include="source\test.bmp" />
+    <Image Include="source\player64\player_0_1.bmp" />
+    <Image Include="source\player64\player_0_2.bmp" />
+    <Image Include="source\player64\player_0_3.bmp" />
+    <Image Include="source\player64\player_0_4.bmp" />
+    <Image Include="source\player64\player_0_5.bmp" />
+    <Image Include="source\player64_mask\player_mask_0_1.bmp" />
+    <Image Include="source\player64_mask\player_mask_0_2.bmp" />
+    <Image Include="source\player64_mask\player_mask_0_3.bmp" />
+    <Image Include="source\player64_mask\player_mask_0_4.bmp" />
+    <Image Include="source\player64_mask\player_mask_0_5.bmp" />
+    <Image Include="source\surfboard64\surfboard_0_1.bmp" />
+    <Image Include="source\surfboard64\surfboard_0_2.bmp" />
+    <Image Include="source\surfboard64\surfboard_0_3.bmp" />
+    <Image Include="source\surfboard64\surfboard_0_4.bmp" />
+    <Image Include="source\surfboard64\surfboard_0_5.bmp" />
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_1.bmp" />
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_2.bmp" />
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_3.bmp" />
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_4.bmp" />
+    <Image Include="source\surfboard64_mask\surfboard_mask_0_5.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
