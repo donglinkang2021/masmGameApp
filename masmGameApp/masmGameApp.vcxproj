@@ -197,6 +197,9 @@
     <Image Include="source\surfboard64_mask\surfboard_mask_0_8.bmp" />
     <Image Include="source\surfboard64_mask\surfboard_mask_0_9.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="resource.inc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />

@@ -9,8 +9,7 @@ include user32.inc
 includelib user32.lib
 include gdi32.inc
 includelib gdi32.lib
-
-
+include resource.inc
 
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
@@ -71,60 +70,6 @@ includelib gdi32.lib
 .const
 	MyWinClass   db "Simple Win Class",0
 	AppName      db "My First Window",0
-    IDI_ICON1 equ 101
-    IDB_PLAYER00 equ 102
-    IDB_PLAYER01 equ 103
-    IDB_PLAYER02 equ 104
-    IDB_PLAYER03 equ 105
-    IDB_PLAYER04 equ 106
-    IDB_PLAYER05 equ 107
-    IDB_PLAYER06 equ 108
-    IDB_PLAYER07 equ 109
-    IDB_PLAYER08 equ 110
-    IDB_PLAYER09 equ 111
-    IDB_PLAYER010 equ 112
-    IDB_PLAYER011 equ 113
-    IDB_PLAYER012 equ 114
-    IDB_PLAYERM00 equ 115
-    IDB_PLAYERM01 equ 116
-    IDB_PLAYERM02 equ 117
-    IDB_PLAYERM03 equ 118
-    IDB_PLAYERM04 equ 119
-    IDB_PLAYERM05 equ 120
-    IDB_PLAYERM06 equ 121
-    IDB_PLAYERM07 equ 122
-    IDB_PLAYERM08 equ 123
-    IDB_PLAYERM09 equ 124
-    IDB_PLAYERM010 equ 125
-    IDB_PLAYERM011 equ 126
-    IDB_PLAYERM012 equ 127
-    IDB_SURFB00 equ 128
-    IDB_SURFB01 equ 129
-    IDB_SURFB02 equ 130
-    IDB_SURFB03 equ 131
-    IDB_SURFB04 equ 132
-    IDB_SURFB05 equ 133
-    IDB_SURFB06 equ 134
-    IDB_SURFB07 equ 135
-    IDB_SURFB08 equ 136
-    IDB_SURFB09 equ 137
-    IDB_SURFB010 equ 138
-    IDB_SURFB011 equ 139
-    IDB_SURFB012 equ 140
-    IDB_SURFBM00 equ 141
-    IDB_SURFBM01 equ 142
-    IDB_SURFBM02 equ 143
-    IDB_SURFBM03 equ 144
-    IDB_SURFBM04 equ 145
-    IDB_SURFBM05 equ 146
-    IDB_SURFBM06 equ 147
-    IDB_SURFBM07 equ 148
-    IDB_SURFBM08 equ 149
-    IDB_SURFBM09 equ 150
-    IDB_SURFBM010 equ 151
-    IDB_SURFBM011 equ 152
-    IDB_SURFBM012 equ 153
-    IDB_BACK equ 154
 	
 .code
 
