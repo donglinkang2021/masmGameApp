@@ -13,7 +13,8 @@ includelib gdi32.lib
 
 
 .data
-	stRect RECT <0,0,0,0>;客户窗口的大小，right代表长，bottom代表高
+	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
+	freshTime dword 60		;刷新时间，以毫秒为单位
 	
 
 .data?
@@ -23,6 +24,12 @@ includelib gdi32.lib
 	; bitmap
 	hBmpTest dd ?		;测试图片的句柄
 	hBmpBack dd ?		;背景图片的句柄
+
+	hBmpPlayer dd ?		;玩家图片的句柄
+	hBmpPlayerM dd ?	;玩家图片的句柄
+	hBmpSurfB dd ?		;玩家图片的句柄
+	hBmpSurfBM dd ?		;玩家图片的句柄
+
 	hBmpPlayer01 dd ?	
 	hBmpPlayerM01 dd ?	
 	hBmpSurfB01 dd ?	
@@ -136,6 +143,16 @@ includelib gdi32.lib
 		mov hBmpSurfB05, eax
 		invoke LoadBitmap, hInstance, IDB_SURFBM05
 		mov hBmpSurfBM05, eax
+
+		; 初始化player和surfB的图片, 之后初始化为00
+		mov eax, hBmpPlayer03
+		mov hBmpPlayer, eax
+		mov eax, hBmpPlayerM03
+		mov hBmpPlayerM, eax
+		mov eax, hBmpSurfB03
+		mov hBmpSurfB, eax
+		mov eax, hBmpSurfBM03
+		mov hBmpSurfBM, eax
 
 		ret
 	LoadAllBmp ENDP
@@ -267,6 +284,46 @@ includelib gdi32.lib
 		ret
 	Buffer2Window ENDP
 
+	
+	;------------------------------------------
+	; PlayerAction - 玩家的操作
+	; @param wParam:WPARAM
+	; @return void
+	;------------------------------------------
+	PlayerAction PROC wParam:WPARAM
+		.if wParam==VK_LEFT
+			mov eax, hBmpSurfBM01
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB01
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM01
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer01
+			mov hBmpPlayer, eax
+		.elseif wParam==VK_RIGHT
+			mov eax, hBmpSurfBM05
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB05
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM05
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer05
+			mov hBmpPlayer, eax
+		.elseif wParam==VK_DOWN
+			mov eax, hBmpSurfBM03
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB03
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM03
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer03
+			mov hBmpPlayer, eax
+		.elseif wParam==VK_UP
+			; 这里应该是00才对的之后导入资源的时候再改
+		.endif
+		ret
+	PlayerAction ENDP
+
 	;------------------------------------------
 	; WndProc - Window procedure
 	; @param hWnd:HWND
@@ -284,15 +341,20 @@ includelib gdi32.lib
 		.elseif uMsg==WM_CREATE
 			invoke LoadAllBmp
 			invoke GetClientRect, hWnd, addr stRect
+			invoke SetTimer,hWnd,1,freshTime,NULL ; 开始计时
 			; 这里之后实现动态波浪移动
+		.elseif uMsg==WM_KEYDOWN
+			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke Bmp2Buffer, hBmpSurfBM01, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpSurfB01, 368, 268, 64, 64, SRCPAINT
-			invoke Bmp2Buffer, hBmpPlayerM01, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpPlayer01, 368, 268, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpSurfBM, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpSurfB, 368, 268, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpPlayerM, 368, 268, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpPlayer, 368, 268, 64, 64, SRCPAINT
 			
 			invoke Buffer2Window
+		.elseif uMsg ==WM_TIMER ;刷新
+			invoke InvalidateRect,hWnd,NULL,FALSE
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		
 			ret
