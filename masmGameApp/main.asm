@@ -16,8 +16,20 @@ includelib gdi32.lib
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
 	freshTime dword 60		;刷新时间，以毫秒为单位
 
-	; player
-	player_action dword 0   ; 0 1 2 3 4 5
+	; player_action
+	; 0 ~ 5 原地, 左左, 左, 中, 右, 右右
+	; 6 ~ 7 落水0, 落水1
+	; 8 站着 
+	; 9 ~ 12 翻滚0, 翻滚1, 翻滚2, 翻滚3
+	player_action dword 0   
+
+	; player_state
+	; 0 普通划水
+	; 1 加速 无动作，只是变快
+	; 2 起飞 翻滚开始动作
+	; 3 落水
+	; 4 站着
+	player_state dword 2
 	
 
 .data?
@@ -28,11 +40,18 @@ includelib gdi32.lib
 	hBmpTest dd ?		;测试图片的句柄
 	hBmpBack dd ?		;背景图片的句柄
 
-	hBmpPlayer dd ?		;玩家图片的句柄
-	hBmpPlayerM dd ?	;玩家图片的句柄
-	hBmpSurfB dd ?		;玩家图片的句柄
-	hBmpSurfBM dd ?		;玩家图片的句柄
+	hBmpPlayer dd ?		;当前玩家图片的句柄
+	hBmpPlayerM dd ?	;当前玩家图片的句柄
+	hBmpSurfB dd ?		;当前玩家图片的句柄
+	hBmpSurfBM dd ?		;当前玩家图片的句柄
 
+	; 后面看能不能把这一段优化成数组的形式
+	; 可以思考，这一个就是一个13x4的int数组存储就可以了
+	; 后面的动画就是板子对应的更新，再说
+	hBmpPlayer00 dd ?	
+	hBmpPlayerM00 dd ?	
+	hBmpSurfB00 dd ?	
+	hBmpSurfBM00 dd ?
 	hBmpPlayer01 dd ?	
 	hBmpPlayerM01 dd ?	
 	hBmpSurfB01 dd ?	
@@ -52,7 +71,35 @@ includelib gdi32.lib
 	hBmpPlayer05 dd ?	
 	hBmpPlayerM05 dd ?	
 	hBmpSurfB05 dd ?	
-	hBmpSurfBM05 dd ?	
+	hBmpSurfBM05 dd ?
+	hBmpPlayer06 dd ?	
+	hBmpPlayerM06 dd ?	
+	hBmpSurfB06 dd ?	
+	hBmpSurfBM06 dd ?
+	hBmpPlayer07 dd ?
+	hBmpPlayerM07 dd ?
+	hBmpSurfB07 dd ?
+	hBmpSurfBM07 dd ?
+	hBmpPlayer08 dd ?
+	hBmpPlayerM08 dd ?
+	hBmpSurfB08 dd ?
+	hBmpSurfBM08 dd ?
+	hBmpPlayer09 dd ?
+	hBmpPlayerM09 dd ?
+	hBmpSurfB09 dd ?
+	hBmpSurfBM09 dd ?
+	hBmpPlayer010 dd ?
+	hBmpPlayerM010 dd ?
+	hBmpSurfB010 dd ?
+	hBmpSurfBM010 dd ?
+	hBmpPlayer011 dd ?
+	hBmpPlayerM011 dd ?
+	hBmpSurfB011 dd ?
+	hBmpSurfBM011 dd ?
+	hBmpPlayer012 dd ?
+	hBmpPlayerM012 dd ?
+	hBmpSurfB012 dd ?
+	hBmpSurfBM012 dd ?		
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -68,29 +115,61 @@ includelib gdi32.lib
 .const
 	MyWinClass   db "Simple Win Class",0
 	AppName      db "My First Window",0
-	IDI_ICON1 equ 101 	;图标的ID
-	IDB_PLAYER01 equ 102
-	IDB_PLAYER02 equ 103
-	IDB_PLAYER03 equ 104
-	IDB_PLAYER04 equ 105
-	IDB_PLAYER05 equ 106
-	IDB_PLAYERM01 equ 107
-	IDB_PLAYERM02 equ 108
-	IDB_PLAYERM03 equ 109
-	IDB_PLAYERM04 equ 110
-	IDB_PLAYERM05 equ 111
-	IDB_SURFB01 equ 112
-	IDB_SURFB02 equ 113
-	IDB_SURFB03 equ 114
-	IDB_SURFB04 equ 115
-	IDB_SURFB05 equ 116
-	IDB_SURFBM01 equ 117
-	IDB_SURFBM02 equ 118
-	IDB_SURFBM03 equ 119
-	IDB_SURFBM04 equ 120
-	IDB_SURFBM05 equ 121
-	IDB_BACK equ 122
-
+    IDI_ICON1 equ 101
+    IDB_PLAYER00 equ 102
+    IDB_PLAYER01 equ 103
+    IDB_PLAYER02 equ 104
+    IDB_PLAYER03 equ 105
+    IDB_PLAYER04 equ 106
+    IDB_PLAYER05 equ 107
+    IDB_PLAYER06 equ 108
+    IDB_PLAYER07 equ 109
+    IDB_PLAYER08 equ 110
+    IDB_PLAYER09 equ 111
+    IDB_PLAYER010 equ 112
+    IDB_PLAYER011 equ 113
+    IDB_PLAYER012 equ 114
+    IDB_PLAYERM00 equ 115
+    IDB_PLAYERM01 equ 116
+    IDB_PLAYERM02 equ 117
+    IDB_PLAYERM03 equ 118
+    IDB_PLAYERM04 equ 119
+    IDB_PLAYERM05 equ 120
+    IDB_PLAYERM06 equ 121
+    IDB_PLAYERM07 equ 122
+    IDB_PLAYERM08 equ 123
+    IDB_PLAYERM09 equ 124
+    IDB_PLAYERM010 equ 125
+    IDB_PLAYERM011 equ 126
+    IDB_PLAYERM012 equ 127
+    IDB_SURFB00 equ 128
+    IDB_SURFB01 equ 129
+    IDB_SURFB02 equ 130
+    IDB_SURFB03 equ 131
+    IDB_SURFB04 equ 132
+    IDB_SURFB05 equ 133
+    IDB_SURFB06 equ 134
+    IDB_SURFB07 equ 135
+    IDB_SURFB08 equ 136
+    IDB_SURFB09 equ 137
+    IDB_SURFB010 equ 138
+    IDB_SURFB011 equ 139
+    IDB_SURFB012 equ 140
+    IDB_SURFBM00 equ 141
+    IDB_SURFBM01 equ 142
+    IDB_SURFBM02 equ 143
+    IDB_SURFBM03 equ 144
+    IDB_SURFBM04 equ 145
+    IDB_SURFBM05 equ 146
+    IDB_SURFBM06 equ 147
+    IDB_SURFBM07 equ 148
+    IDB_SURFBM08 equ 149
+    IDB_SURFBM09 equ 150
+    IDB_SURFBM010 equ 151
+    IDB_SURFBM011 equ 152
+    IDB_SURFBM012 equ 153
+    IDB_BACK equ 154
+	
 .code
 
 	;------------------------------------------
@@ -101,6 +180,15 @@ includelib gdi32.lib
 	LoadAllBmp PROC
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER00
+		mov hBmpPlayer00, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM00
+		mov hBmpPlayerM00, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB00
+		mov hBmpSurfB00, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM00
+		mov hBmpSurfBM00, eax
 
 		invoke LoadBitmap, hInstance, IDB_PLAYER01
 		mov hBmpPlayer01, eax
@@ -147,17 +235,78 @@ includelib gdi32.lib
 		invoke LoadBitmap, hInstance, IDB_SURFBM05
 		mov hBmpSurfBM05, eax
 
+		invoke LoadBitmap, hInstance, IDB_PLAYER06
+		mov hBmpPlayer06, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM06
+		mov hBmpPlayerM06, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB06
+		mov hBmpSurfB06, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM06
+		mov hBmpSurfBM06, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER07
+		mov hBmpPlayer07, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM07
+		mov hBmpPlayerM07, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB07
+		mov hBmpSurfB07, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM07
+		mov hBmpSurfBM07, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER08
+		mov hBmpPlayer08, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM08
+		mov hBmpPlayerM08, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB08
+		mov hBmpSurfB08, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM08
+		mov hBmpSurfBM08, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER09
+		mov hBmpPlayer09, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM09
+		mov hBmpPlayerM09, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB09
+		mov hBmpSurfB09, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM09
+		mov hBmpSurfBM09, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER010
+		mov hBmpPlayer010, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM010
+		mov hBmpPlayerM010, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB010
+		mov hBmpSurfB010, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM010
+		mov hBmpSurfBM010, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER011
+		mov hBmpPlayer011, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM011
+		mov hBmpPlayerM011, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB011
+		mov hBmpSurfB011, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM011
+		mov hBmpSurfBM011, eax
+
+		invoke LoadBitmap, hInstance, IDB_PLAYER012
+		mov hBmpPlayer012, eax
+		invoke LoadBitmap, hInstance, IDB_PLAYERM012
+		mov hBmpPlayerM012, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB012
+		mov hBmpSurfB012, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM012
+		mov hBmpSurfBM012, eax
+
 		; 初始化player和surfB的图片, 之后初始化为00
-		mov eax, hBmpPlayer03
+		mov eax, hBmpPlayer00
 		mov hBmpPlayer, eax
-		mov eax, hBmpPlayerM03
+		mov eax, hBmpPlayerM00
 		mov hBmpPlayerM, eax
-		mov eax, hBmpSurfB03
+		mov eax, hBmpSurfB00
 		mov hBmpSurfB, eax
-		mov eax, hBmpSurfBM03
+		mov eax, hBmpSurfBM00
 		mov hBmpSurfBM, eax
-		mov eax, 3
-		mov player_action, eax
 
 		ret
 	LoadAllBmp ENDP
@@ -170,6 +319,10 @@ includelib gdi32.lib
 	;------------------------------------------
 	DeleteBmp PROC
 		invoke DeleteObject, hBmpBack
+		invoke DeleteObject, hBmpPlayer00
+		invoke DeleteObject, hBmpPlayerM00
+		invoke DeleteObject, hBmpSurfB00
+		invoke DeleteObject, hBmpSurfBM00
 		invoke DeleteObject, hBmpPlayer01
 		invoke DeleteObject, hBmpPlayerM01
 		invoke DeleteObject, hBmpSurfB01
@@ -190,6 +343,35 @@ includelib gdi32.lib
 		invoke DeleteObject, hBmpPlayerM05
 		invoke DeleteObject, hBmpSurfB05
 		invoke DeleteObject, hBmpSurfBM05
+		invoke DeleteObject, hBmpPlayer06
+		invoke DeleteObject, hBmpPlayerM06
+		invoke DeleteObject, hBmpSurfB06
+		invoke DeleteObject, hBmpSurfBM06
+		invoke DeleteObject, hBmpPlayer07
+		invoke DeleteObject, hBmpPlayerM07
+		invoke DeleteObject, hBmpSurfB07
+		invoke DeleteObject, hBmpSurfBM07
+		invoke DeleteObject, hBmpPlayer08
+		invoke DeleteObject, hBmpPlayerM08
+		invoke DeleteObject, hBmpSurfB08
+		invoke DeleteObject, hBmpSurfBM08
+		invoke DeleteObject, hBmpPlayer09
+		invoke DeleteObject, hBmpPlayerM09
+		invoke DeleteObject, hBmpSurfB09
+		invoke DeleteObject, hBmpSurfBM09
+		invoke DeleteObject, hBmpPlayer010
+		invoke DeleteObject, hBmpPlayerM010
+		invoke DeleteObject, hBmpSurfB010
+		invoke DeleteObject, hBmpSurfBM010
+		invoke DeleteObject, hBmpPlayer011
+		invoke DeleteObject, hBmpPlayerM011
+		invoke DeleteObject, hBmpSurfB011
+		invoke DeleteObject, hBmpSurfBM011
+		invoke DeleteObject, hBmpPlayer012
+		invoke DeleteObject, hBmpPlayerM012
+		invoke DeleteObject, hBmpSurfB012
+		invoke DeleteObject, hBmpSurfBM012
+
 		ret
 	DeleteBmp ENDP
 
@@ -296,13 +478,13 @@ includelib gdi32.lib
 	UpdateActionBmp PROC
 		.if player_action == 0
 			; 之后这里要改成 00
-			mov eax, hBmpSurfBM03
+			mov eax, hBmpSurfBM00
 			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB03
+			mov eax, hBmpSurfB00
 			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM03
+			mov eax, hBmpPlayerM00
 			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer03
+			mov eax, hBmpPlayer00
 			mov hBmpPlayer, eax
 		.elseif player_action == 1
 			mov eax, hBmpSurfBM01
@@ -349,6 +531,69 @@ includelib gdi32.lib
 			mov hBmpPlayerM, eax
 			mov eax, hBmpPlayer05
 			mov hBmpPlayer, eax
+		.elseif player_action == 6
+			mov eax, hBmpSurfBM06
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB06
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM06
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer06
+			mov hBmpPlayer, eax
+		.elseif player_action == 7
+			mov eax, hBmpSurfBM07
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB07
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM07
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer07
+			mov hBmpPlayer, eax
+		.elseif player_action == 8
+			mov eax, hBmpSurfBM08
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB08
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM08
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer08
+			mov hBmpPlayer, eax
+		.elseif player_action == 9
+			mov eax, hBmpSurfBM09
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB09
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM09
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer09
+			mov hBmpPlayer, eax
+		.elseif player_action == 10
+			mov eax, hBmpSurfBM010
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB010
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM010
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer010
+			mov hBmpPlayer, eax
+		.elseif player_action == 11
+			mov eax, hBmpSurfBM011
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB011
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM011
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer011
+			mov hBmpPlayer, eax
+		.elseif player_action == 12
+			mov eax, hBmpSurfBM012
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB012
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM012
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer012
+			mov hBmpPlayer, eax
 		.endif
 		ret
 	UpdateActionBmp ENDP
@@ -360,7 +605,7 @@ includelib gdi32.lib
 	;------------------------------------------
 	PlayerAction PROC wParam:WPARAM
 		.if wParam==VK_LEFT
-			.if player_action > 1
+			.if player_action > 1 && player_action < 6
 				.if player_action > 3
 					mov eax, 2
 					mov player_action, eax
@@ -369,7 +614,7 @@ includelib gdi32.lib
 				.endif
 			.endif
 		.elseif wParam==VK_RIGHT
-			.if player_action < 5
+			.if player_action < 5 && player_action > 0
 				.if player_action < 3
 					mov eax, 4
 					mov player_action, eax
@@ -378,11 +623,23 @@ includelib gdi32.lib
 				.endif
 			.endif
 		.elseif wParam==VK_DOWN
-			mov eax, 3
-			mov player_action, eax
+			.if player_state == 0
+				mov eax, 3
+				mov player_state, eax
+			.elseif player_state == 2
+				.if player_action < 6
+					mov eax, 9
+					mov player_action, eax
+				.elseif player_action >= 9 && player_action < 12
+					inc player_action
+				.elseif player_action == 12
+					mov eax, 3
+					mov player_action, eax
+				.endif
+			.endif
 		.elseif wParam==VK_UP
 			; 这里应该是00才对的之后导入资源的时候再改
-			mov eax, 3
+			mov eax, 0
 			mov player_action, eax
 		.endif
 		invoke UpdateActionBmp
