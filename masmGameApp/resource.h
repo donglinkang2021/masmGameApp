@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ Éú³ÉµÄ°üº¬ÎÄ¼þ¡£
-// ¹© masmGameApp.rc Ê¹ÓÃ
+// Microsoft Visual C++ ï¿½ï¿½ï¿½ÉµÄ°ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+// ï¿½ï¿½ masmGameApp.rc Ê¹ï¿½ï¿½
 //
 #define IDI_ICON1                       101
 #define IDB_PLAYER00                    102
@@ -109,6 +109,7 @@
 #define IDB_SURFBM211                   205
 #define IDB_SURFBM212                   206
 #define IDB_WATER                       207
+#define IDB_WATERLG                     208
 
 // Next default values for new objects
 // 

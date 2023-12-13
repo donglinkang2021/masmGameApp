@@ -248,6 +248,7 @@
     <Image Include="source\surfboard64_mask\surfboard_mask_2_7.bmp" />
     <Image Include="source\surfboard64_mask\surfboard_mask_2_8.bmp" />
     <Image Include="source\surfboard64_mask\surfboard_mask_2_9.bmp" />
+    <Image Include="source\water1024.bmp" />
     <Image Include="source\water256.bmp" />
     <Image Include="source\water256_mask.bmp" />
   </ItemGroup>

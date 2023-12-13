@@ -49,7 +49,7 @@ include resource.inc
 		y dd ?
 	PosWater ends
 
-	water PosWater <400,300>
+	water PosWater <-112,-212>
 
 	SurferHandle struct
 		Player dd ?	
@@ -98,7 +98,7 @@ include resource.inc
 	LoadAllBmp PROC
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
-		invoke LoadBitmap, hInstance, IDB_WATER
+		invoke LoadBitmap, hInstance, IDB_WATERLG
 		mov hBmpWater, eax
 
 		mov edi, offset surfers
@@ -694,11 +694,11 @@ include resource.inc
 		.endif
 
 		; 循环恢复
-		.if eax < 144 || eax > 656
-			mov eax, 400
+		.if eax < -368
+			mov eax, -112
 		.endif
-		.if ecx < 44
-			mov ecx, 300
+		.if ecx < -468
+			mov ecx, -212
 		.endif
 
 		mov water.x, eax 
@@ -706,98 +706,6 @@ include resource.inc
 		ret
 	UpdateWater ENDP
 
-	;------------------------------------------
-	; RenderWater - 加载浪花的位置
-	; @param 
-	; @return void
-	;------------------------------------------
-	RenderWater PROC
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 768
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 512
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 256
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 256
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 512
-		sub ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 768
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 512
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 512
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 768
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 512
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		sub eax, 256
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 256
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		mov eax, water.x
-		mov ecx, water.y
-		add eax, 512
-		add ecx, 256
-		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
-		
-		ret
-	RenderWater ENDP
 
 	;------------------------------------------
 	; WndProc - Window procedure
@@ -822,7 +730,7 @@ include resource.inc
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke RenderWater
+			invoke Bmp2Buffer, hBmpWater, water.x, water.y, 1024, 1024, SRCPAINT
 			invoke Bmp2Buffer, hBmpSurfBM, 368, 268, 64, 64, SRCAND
 			invoke Bmp2Buffer, hBmpSurfB, 368, 268, 64, 64, SRCPAINT
 			invoke Bmp2Buffer, hBmpPlayerM, 368, 268, 64, 64, SRCAND
