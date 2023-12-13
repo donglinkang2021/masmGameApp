@@ -15,6 +15,9 @@ includelib gdi32.lib
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
 	freshTime dword 60		;刷新时间，以毫秒为单位
+
+	; player
+	player_action dword 0   ; 0 1 2 3 4 5
 	
 
 .data?
@@ -153,6 +156,8 @@ includelib gdi32.lib
 		mov hBmpSurfB, eax
 		mov eax, hBmpSurfBM03
 		mov hBmpSurfBM, eax
+		mov eax, 3
+		mov player_action, eax
 
 		ret
 	LoadAllBmp ENDP
@@ -286,30 +291,11 @@ includelib gdi32.lib
 
 	
 	;------------------------------------------
-	; PlayerAction - 玩家的操作
-	; @param wParam:WPARAM
-	; @return void
+	; UpdateActionBmp - 更新动作bmp的句柄
 	;------------------------------------------
-	PlayerAction PROC wParam:WPARAM
-		.if wParam==VK_LEFT
-			mov eax, hBmpSurfBM01
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB01
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM01
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer01
-			mov hBmpPlayer, eax
-		.elseif wParam==VK_RIGHT
-			mov eax, hBmpSurfBM05
-			mov hBmpSurfBM, eax
-			mov eax, hBmpSurfB05
-			mov hBmpSurfB, eax
-			mov eax, hBmpPlayerM05
-			mov hBmpPlayerM, eax
-			mov eax, hBmpPlayer05
-			mov hBmpPlayer, eax
-		.elseif wParam==VK_DOWN
+	UpdateActionBmp PROC
+		.if player_action == 0
+			; 之后这里要改成 00
 			mov eax, hBmpSurfBM03
 			mov hBmpSurfBM, eax
 			mov eax, hBmpSurfB03
@@ -318,9 +304,88 @@ includelib gdi32.lib
 			mov hBmpPlayerM, eax
 			mov eax, hBmpPlayer03
 			mov hBmpPlayer, eax
+		.elseif player_action == 1
+			mov eax, hBmpSurfBM01
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB01
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM01
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer01
+			mov hBmpPlayer, eax
+		.elseif player_action == 2
+			mov eax, hBmpSurfBM02
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB02
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM02
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer02
+			mov hBmpPlayer, eax
+		.elseif player_action == 3
+			mov eax, hBmpSurfBM03
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB03
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM03
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer03
+			mov hBmpPlayer, eax
+		.elseif player_action == 4
+			mov eax, hBmpSurfBM04
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB04
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM04
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer04
+			mov hBmpPlayer, eax
+		.elseif player_action == 5
+			mov eax, hBmpSurfBM05
+			mov hBmpSurfBM, eax
+			mov eax, hBmpSurfB05
+			mov hBmpSurfB, eax
+			mov eax, hBmpPlayerM05
+			mov hBmpPlayerM, eax
+			mov eax, hBmpPlayer05
+			mov hBmpPlayer, eax
+		.endif
+		ret
+	UpdateActionBmp ENDP
+	
+	;------------------------------------------
+	; PlayerAction - 玩家的操作
+	; @param wParam:WPARAM
+	; @return void
+	;------------------------------------------
+	PlayerAction PROC wParam:WPARAM
+		.if wParam==VK_LEFT
+			.if player_action > 1
+				.if player_action > 3
+					mov eax, 2
+					mov player_action, eax
+				.else
+					dec player_action
+				.endif
+			.endif
+		.elseif wParam==VK_RIGHT
+			.if player_action < 5
+				.if player_action < 3
+					mov eax, 4
+					mov player_action, eax
+				.else
+					inc player_action
+				.endif
+			.endif
+		.elseif wParam==VK_DOWN
+			mov eax, 3
+			mov player_action, eax
 		.elseif wParam==VK_UP
 			; 这里应该是00才对的之后导入资源的时候再改
+			mov eax, 3
+			mov player_action, eax
 		.endif
+		invoke UpdateActionBmp
 		ret
 	PlayerAction ENDP
 
