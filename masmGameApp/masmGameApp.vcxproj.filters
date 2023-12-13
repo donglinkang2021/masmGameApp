@@ -192,6 +192,162 @@
     <Image Include="source\background.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="source\surfboard64\surfboard_1_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_9.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_10.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_11.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_1_12.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_9.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_10.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_11.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64\surfboard_2_12.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_9.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_10.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_11.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_1_12.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_9.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_10.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_11.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\surfboard64_mask\surfboard_mask_2_12.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource.inc">

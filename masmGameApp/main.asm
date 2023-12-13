@@ -44,17 +44,27 @@ include resource.inc
 	hBmpSurfB dd ?		;当前玩家图片的句柄
 	hBmpSurfBM dd ?		;当前玩家图片的句柄
 
-	; 后面看能不能把这一段优化成数组的形式
-	; 可以思考，这一个就是一个13x4的int数组存储就可以了
-	; 后面的动画就是板子对应的更新，再说
 	SurferHandle struct
-		Player dd ?		;当前玩家图片的句柄
-		PlayerM dd ?	;当前玩家图片的句柄
-		SurfB dd ?		;当前玩家图片的句柄
-		SurfBM dd ?		;当前玩家图片的句柄
+		Player dd ?	
+		PlayerM dd ?
+		SurfB dd ?	
+		SurfBM dd ?	
 	SurferHandle ends
 
-	surfers SurferHandle 13 dup(<?,?,?,?>)	
+	surfers SurferHandle 13 dup(<?,?,?,?>)
+
+	; 后面的动画就是板子对应的更新
+	SurfBoardHandle struct
+		SurfB0 dd ?	
+		SurfBM0 dd ?
+		SurfB1 dd ?
+		SurfBM1 dd ?
+		SurfB2 dd ?
+		SurfBM2 dd ?
+	SurfBoardHandle ends
+
+	surfBoardAni SurfBoardHandle 13 dup(<?,?,?,?,?,?>)
+	surfBtimer dword 0
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -214,7 +224,7 @@ include resource.inc
 		mov (SurferHandle PTR [edi]).SurfBM, eax
 		add edi, TYPE SurferHandle
 
-		; 初始化player和surfB的图片, 之后初始化为00
+		; 初始化player和surfB的图片
 		mov edi, offset surfers
 		mov eax, (SurferHandle PTR [edi]).Player
 		mov hBmpPlayer, eax
@@ -224,6 +234,190 @@ include resource.inc
 		mov hBmpSurfB, eax
 		mov eax, (SurferHandle PTR [edi]).SurfBM
 		mov hBmpSurfBM, eax
+
+		; 初始化surfBoard的图片
+		mov edi, offset surfBoardAni
+		invoke LoadBitmap, hInstance, IDB_SURFB00
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM00
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB10
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM10
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax	
+		invoke LoadBitmap, hInstance, IDB_SURFB20
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM20
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB01
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM01
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB11
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM11
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB21
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM21
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle	
+
+		invoke LoadBitmap, hInstance, IDB_SURFB02
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM02
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB12
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM12
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB22
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM22
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB03
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM03
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB13
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM13
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB23
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM23
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB04
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM04
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB14
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM14
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB24
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM24
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB05
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM05
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB15
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM15
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB25
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM25
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB06
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM06
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB16
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM16
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB26
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM26
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB07
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM07
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB17
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM17
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB27
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM27
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB08
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM08
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB18
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM18
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB28
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM28
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB09
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM09
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB19
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM19
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB29
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM29
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB010
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM010
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB110
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM110
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB210
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM210
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB011
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM011
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB111
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM111
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB211
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM211
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
+
+		invoke LoadBitmap, hInstance, IDB_SURFB012
+		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM012
+		mov (SurfBoardHandle PTR [edi]).SurfBM0, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB112
+		mov (SurfBoardHandle PTR [edi]).SurfB1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM112
+		mov (SurfBoardHandle PTR [edi]).SurfBM1, eax
+		invoke LoadBitmap, hInstance, IDB_SURFB212
+		mov (SurfBoardHandle PTR [edi]).SurfB2, eax
+		invoke LoadBitmap, hInstance, IDB_SURFBM212
+		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
+		add edi, TYPE SurfBoardHandle
 		
 		ret
 	LoadAllBmp ENDP
@@ -415,6 +609,53 @@ include resource.inc
 	PlayerAction ENDP
 
 	;------------------------------------------
+	; UpdateSurfBoard - 更新surfB的句柄
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateSurfBoard PROC
+		inc surfBtimer
+		mov eax, surfBtimer
+		mov edx, 0    ; 清零edx，因为div指令会使用edx:eax作为被除数
+		mov ecx, 3    ; 将3放入ecx，作为除数
+		div ecx       ; 执行除法操作，eax = edx:eax / ecx，edx = edx:eax % ecx
+		mov surfBtimer, edx  ; 将余数（%结果）放回surfBtimer
+
+		.if surfBtimer == 0
+			mov edi, offset surfBoardAni
+			mov esi, player_action
+			imul esi, TYPE SurfBoardHandle
+			add edi, esi
+
+			mov eax, (SurfBoardHandle PTR [edi]).SurfB0
+			mov hBmpSurfB, eax
+			mov eax, (SurfBoardHandle PTR [edi]).SurfBM0
+			mov hBmpSurfBM, eax
+		.elseif surfBtimer == 1
+			mov edi, offset surfBoardAni
+			mov esi, player_action
+			imul esi, TYPE SurfBoardHandle
+			add edi, esi
+
+			mov eax, (SurfBoardHandle PTR [edi]).SurfB1
+			mov hBmpSurfB, eax
+			mov eax, (SurfBoardHandle PTR [edi]).SurfBM1
+			mov hBmpSurfBM, eax
+		.elseif surfBtimer == 2
+			mov edi, offset surfBoardAni
+			mov esi, player_action
+			imul esi, TYPE SurfBoardHandle
+			add edi, esi
+
+			mov eax, (SurfBoardHandle PTR [edi]).SurfB2
+			mov hBmpSurfB, eax
+			mov eax, (SurfBoardHandle PTR [edi]).SurfBM2
+			mov hBmpSurfBM, eax
+		.endif
+		ret
+	UpdateSurfBoard ENDP
+
+	;------------------------------------------
 	; WndProc - Window procedure
 	; @param hWnd:HWND
 	; @param uMsg:UINT
@@ -445,6 +686,7 @@ include resource.inc
 			invoke Buffer2Window
 		.elseif uMsg ==WM_TIMER ;刷新
 			invoke InvalidateRect,hWnd,NULL,FALSE
+			invoke UpdateSurfBoard
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		
 			ret
