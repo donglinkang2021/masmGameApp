@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ ï¿½ï¿½ï¿½ÉµÄ°ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
-// ï¿½ï¿½ masmGameApp.rc Ê¹ï¿½ï¿½
+// Microsoft Visual C++ Éú³ÉµÄ°üº¬ÎÄ¼þ¡£
+// ¹© masmGameApp.rc Ê¹ÓÃ
 //
 #define IDI_ICON1                       101
 #define IDB_PLAYER00                    102
@@ -82,38 +82,39 @@
 #define IDB_SURFB210                    178
 #define IDB_SURFB211                    179
 #define IDB_SURFB212                    180
-#define IDB_SURFBM10 181
-#define IDB_SURFBM11 182
-#define IDB_SURFBM12 183
-#define IDB_SURFBM13 184
-#define IDB_SURFBM14 185
-#define IDB_SURFBM15 186
-#define IDB_SURFBM16 187
-#define IDB_SURFBM17 188
-#define IDB_SURFBM18 189
-#define IDB_SURFBM19 190
-#define IDB_SURFBM110 191
-#define IDB_SURFBM111 192
-#define IDB_SURFBM112 193
-#define IDB_SURFBM20 194
-#define IDB_SURFBM21 195
-#define IDB_SURFBM22 196
-#define IDB_SURFBM23 197
-#define IDB_SURFBM24 198
-#define IDB_SURFBM25 199
-#define IDB_SURFBM26 200
-#define IDB_SURFBM27 201
-#define IDB_SURFBM28 202
-#define IDB_SURFBM29 203
-#define IDB_SURFBM210 204
-#define IDB_SURFBM211 205
-#define IDB_SURFBM212 206
+#define IDB_SURFBM10                    181
+#define IDB_SURFBM11                    182
+#define IDB_SURFBM12                    183
+#define IDB_SURFBM13                    184
+#define IDB_SURFBM14                    185
+#define IDB_SURFBM15                    186
+#define IDB_SURFBM16                    187
+#define IDB_SURFBM17                    188
+#define IDB_SURFBM18                    189
+#define IDB_SURFBM19                    190
+#define IDB_SURFBM110                   191
+#define IDB_SURFBM111                   192
+#define IDB_SURFBM112                   193
+#define IDB_SURFBM20                    194
+#define IDB_SURFBM21                    195
+#define IDB_SURFBM22                    196
+#define IDB_SURFBM23                    197
+#define IDB_SURFBM24                    198
+#define IDB_SURFBM25                    199
+#define IDB_SURFBM26                    200
+#define IDB_SURFBM27                    201
+#define IDB_SURFBM28                    202
+#define IDB_SURFBM29                    203
+#define IDB_SURFBM210                   204
+#define IDB_SURFBM211                   205
+#define IDB_SURFBM212                   206
+#define IDB_WATER                       207
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        207
+#define _APS_NEXT_RESOURCE_VALUE        209
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

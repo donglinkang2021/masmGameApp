@@ -13,7 +13,7 @@ include resource.inc
 
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
-	freshTime dword 60		;刷新时间，以毫秒为单位
+	freshTime dword 32		;刷新时间，以毫秒为单位
 
 	; player_action
 	; 0 ~ 5 原地, 左左, 左, 中, 右, 右右
@@ -36,13 +36,20 @@ include resource.inc
 	hWinMain dword ?	;窗体的句柄
 	
 	; bitmap
-	hBmpTest dd ?		;测试图片的句柄
 	hBmpBack dd ?		;背景图片的句柄
+	hBmpWater dd ?		;浪花的句柄, 浪花不需要mask
 
 	hBmpPlayer dd ?		;当前玩家图片的句柄
 	hBmpPlayerM dd ?	;当前玩家图片的句柄
 	hBmpSurfB dd ?		;当前玩家图片的句柄
 	hBmpSurfBM dd ?		;当前玩家图片的句柄
+
+	PosWater struct
+		x dd ?
+		y dd ?
+	PosWater ends
+
+	water PosWater <400,300>
 
 	SurferHandle struct
 		Player dd ?	
@@ -91,6 +98,8 @@ include resource.inc
 	LoadAllBmp PROC
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
+		invoke LoadBitmap, hInstance, IDB_WATER
+		mov hBmpWater, eax
 
 		mov edi, offset surfers
 
@@ -430,6 +439,7 @@ include resource.inc
 	;------------------------------------------
 	DeleteBmp PROC
 		invoke DeleteObject, hBmpBack
+		invoke DeleteObject, hBmpWater
 		mov edi, offset surfers
 		mov esi, 0
 		.while esi < 13
@@ -656,6 +666,140 @@ include resource.inc
 	UpdateSurfBoard ENDP
 
 	;------------------------------------------
+	; UpdateWater - 更新波浪的位置
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateWater PROC
+		mov eax, water.x
+		mov ecx, water.y
+		.if player_action == 0 || player_action == 6 || player_action == 7 || player_action == 8
+			
+		.elseif player_action == 1
+			add eax, 14
+			sub ecx, 14
+		.elseif player_action == 2
+			add eax, 8
+			sub ecx, 16
+		.elseif player_action == 3
+			sub ecx, 20
+		.elseif player_action == 4
+			sub eax, 8
+			sub ecx, 16
+		.elseif player_action == 5
+			sub eax, 14
+			sub ecx, 14
+		.else
+			sub ecx, 32
+		.endif
+
+		; 循环恢复
+		.if eax < 144 || eax > 656
+			mov eax, 400
+		.endif
+		.if ecx < 44
+			mov ecx, 300
+		.endif
+
+		mov water.x, eax 
+		mov water.y, ecx
+		ret
+	UpdateWater ENDP
+
+	;------------------------------------------
+	; RenderWater - 加载浪花的位置
+	; @param 
+	; @return void
+	;------------------------------------------
+	RenderWater PROC
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 768
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 512
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 256
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 256
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 512
+		sub ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 768
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 512
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 512
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 768
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 512
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		sub eax, 256
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 256
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, 512
+		add ecx, 256
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 256, 256, SRCPAINT
+		
+		ret
+	RenderWater ENDP
+
+	;------------------------------------------
 	; WndProc - Window procedure
 	; @param hWnd:HWND
 	; @param uMsg:UINT
@@ -678,6 +822,7 @@ include resource.inc
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
+			invoke RenderWater
 			invoke Bmp2Buffer, hBmpSurfBM, 368, 268, 64, 64, SRCAND
 			invoke Bmp2Buffer, hBmpSurfB, 368, 268, 64, 64, SRCPAINT
 			invoke Bmp2Buffer, hBmpPlayerM, 368, 268, 64, 64, SRCAND
@@ -687,6 +832,7 @@ include resource.inc
 		.elseif uMsg ==WM_TIMER ;刷新
 			invoke InvalidateRect,hWnd,NULL,FALSE
 			invoke UpdateSurfBoard
+			invoke UpdateWater
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		
 			ret

@@ -348,6 +348,12 @@
     <Image Include="source\surfboard64_mask\surfboard_mask_2_12.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="source\water256.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\water256_mask.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource.inc">
