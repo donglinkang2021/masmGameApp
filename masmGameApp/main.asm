@@ -10,14 +10,16 @@ includelib user32.lib
 include gdi32.inc
 includelib gdi32.lib
 include resource.inc
-
+include	masm32.inc
+includelib msvcrt.lib
+rand	proto C
 
 .const
 	MyWinClass   db "Simple Win Class",0
-	AppName      db "My First Window",0
+	AppName      db "Surf",0
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
-	freshTime dword 32		;刷新时间，以毫秒为单位
+	freshTime dword 64		;刷新时间，以毫秒为单位
 
 	; player_action
 	; 0 ~ 5 原地, 左左, 左, 中, 右, 右右
@@ -49,10 +51,14 @@ include resource.inc
 	speed RelSpeed <0,0>
 
 	; 用于控制surfB的动画
-	surfBtimer dword 0
+	aniTimer dword 0
 
 	;当前已经加载的图片的数量
 	itemsCount dd 0	
+
+	; 记录生成的slowdown的数量
+	slowdCount dd 0
+	slowdInterval dd 20 ; 用于控制slowdown的生成间隔
 
 .data?
 	hInstance dword ? 	;程序的句柄
@@ -61,6 +67,7 @@ include resource.inc
 	; bitmap
 	hBmpBack dd ?		;背景图片的句柄
 	hBmpWater dd ?		;浪花的句柄, 浪花不需要mask
+	hBmpSlowd dd ?		;slowdown的句柄
 
 	hBmpPlayer dd ?		;当前玩家图片的句柄
 	hBmpPlayerM dd ?	;当前玩家图片的句柄
@@ -88,17 +95,21 @@ include resource.inc
 
 	surfBoardAni SurfBoardHandle 13 dup(<?,?,?,?,?,?>)
 
-	; 添加slowdown及其动画
+	; 添加slowdown及其动画，不需要mask
 	SlowdownHandle struct
 		SlowD0 dd ?
-		SlowDM0 dd ?
 		SlowD1 dd ?
-		SlowDM1 dd ?
 		SlowD2 dd ?
-		SlowDM2 dd ?
 	SlowdownHandle ends
 
-	slowdownAni SlowdownHandle 9 dup(<?,?,?,?,?,?>)
+	slowdownAni SlowdownHandle 9 dup(<?,?,?>)
+
+	; 添加Slowdown的位置
+	PosSlowdown struct
+		x dd ?
+		y dd ?
+	PosSlowdown ends
+	slowdownPos PosSlowdown 128 dup(<?,?>)
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -114,11 +125,28 @@ include resource.inc
 .code
 
 	;------------------------------------------
+	; GetRandom - 获取一个随机数
+	; @param left - 随机数的左边界
+	; @param right - 随机数的右边界
+	; @return 随机数
+	;------------------------------------------
+	GetRandom PROC left:dword,right:dword
+		invoke rand
+		xor edx,edx
+		mov ebx,right
+		sub ebx,left
+		div ebx
+		add edx,left
+		mov eax,edx
+		ret
+	GetRandom ENDP
+
+	;------------------------------------------
 	; LoadSurfer - 加载surfer的图片
 	; @param
 	; @return void
 	;------------------------------------------
-	LoadSurfer PROC
+	LoadSurfer PROC uses eax ebx ecx edx esi edi 
 		mov edi, offset surfers
 		invoke LoadBitmap, hInstance, IDB_PLAYER00
 		mov (SurferHandle PTR [edi]).Player, eax
@@ -249,6 +277,17 @@ include resource.inc
 		invoke LoadBitmap, hInstance, IDB_SURFBM012
 		mov (SurferHandle PTR [edi]).SurfBM, eax
 		add edi, TYPE SurferHandle
+
+		; 初始化player和surfB的图片
+		mov edi, offset surfers
+		mov eax, (SurferHandle PTR [edi]).Player
+		mov hBmpPlayer, eax
+		mov eax, (SurferHandle PTR [edi]).PlayerM
+		mov hBmpPlayerM, eax
+		mov eax, (SurferHandle PTR [edi]).SurfB
+		mov hBmpSurfB, eax
+		mov eax, (SurferHandle PTR [edi]).SurfBM
+		mov hBmpSurfBM, eax
 		ret
 	LoadSurfer ENDP
 
@@ -257,7 +296,7 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	LoadSurfboard PROC
+	LoadSurfboard PROC uses eax ebx ecx edx esi edi 
 		mov edi, offset surfBoardAni
 		invoke LoadBitmap, hInstance, IDB_SURFB00
 		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
@@ -448,133 +487,84 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	LoadSlowdown PROC
+	LoadSlowdown PROC uses eax ebx ecx edx esi edi 
 		mov edi, offset slowdownAni
 		invoke LoadBitmap, hInstance, IDB_SLOWD00
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM00
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD10
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM10
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD20
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM20
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD01
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM01
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD11
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM11
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD21
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM21
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD02
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM02
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD12
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM12
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD22
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM22
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD03
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM03
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD13
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM13
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD23
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM23
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD04
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM04
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD14
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM14
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD24
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM24
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD05
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM05
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD15
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM15
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD25
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM25
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD06
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM06
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD16
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM16
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD26
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM26
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD07
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM07
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD17
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM17
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD27
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM27
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
 
 		invoke LoadBitmap, hInstance, IDB_SLOWD08
 		mov (SlowdownHandle PTR [edi]).SlowD0, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM08
-		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD18
 		mov (SlowdownHandle PTR [edi]).SlowD1, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM18
-		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
 		invoke LoadBitmap, hInstance, IDB_SLOWD28
 		mov (SlowdownHandle PTR [edi]).SlowD2, eax
-		invoke LoadBitmap, hInstance, IDB_SLOWDM28
-		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
 		add edi, TYPE SlowdownHandle
+
+		; 暂时只加载为00的图片
+		mov edi, offset slowdownAni
+		mov eax, (SlowdownHandle PTR [edi]).SlowD0
+		mov hBmpSlowd, eax
 		ret
 	LoadSlowdown ENDP
 	
@@ -583,7 +573,7 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	LoadAllBmp PROC
+	LoadAllBmp PROC uses eax ebx ecx edx esi edi 
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
 		invoke LoadBitmap, hInstance, IDB_WATERMD
@@ -591,17 +581,6 @@ include resource.inc
 
 		; 初始化surfer的图片
 		invoke LoadSurfer
-
-		; 初始化player和surfB的图片
-		mov edi, offset surfers
-		mov eax, (SurferHandle PTR [edi]).Player
-		mov hBmpPlayer, eax
-		mov eax, (SurferHandle PTR [edi]).PlayerM
-		mov hBmpPlayerM, eax
-		mov eax, (SurferHandle PTR [edi]).SurfB
-		mov hBmpSurfB, eax
-		mov eax, (SurferHandle PTR [edi]).SurfBM
-		mov hBmpSurfBM, eax
 
 		; 初始化surfBoard的图片
 		invoke LoadSurfboard
@@ -618,9 +597,10 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	DeleteBmp PROC
+	DeleteBmp PROC uses eax ebx ecx edx esi edi 
 		invoke DeleteObject, hBmpBack
 		invoke DeleteObject, hBmpWater
+		invoke DeleteObject, hBmpSlowd
 		mov edi, offset surfers
 		mov esi, 0
 		.while esi < 13
@@ -647,11 +627,8 @@ include resource.inc
 		mov esi, 0
 		.while esi < 9
 			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD0
-			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM0
 			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD1
-			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM1
 			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD2
-			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM2
 			add edi, TYPE SlowdownHandle
 			inc esi
 		.endw
@@ -669,7 +646,7 @@ include resource.inc
 	; @param flag:DWORD
 	; @return void
 	;------------------------------------------
-	Bmp2Buffer PROC hBmp:DWORD, x:DWORD, y:DWORD, w:DWORD, h:DWORD, flag:DWORD
+	Bmp2Buffer PROC uses eax ebx ecx edx esi edi hBmp:DWORD, x:DWORD, y:DWORD, w:DWORD, h:DWORD, flag:DWORD
 		; get the top buffer
 		mov eax, itemsCount
 		mov edi, offset items
@@ -702,7 +679,7 @@ include resource.inc
 	; @param hWnd:HWND
 	; @return void
 	;------------------------------------------
-	Buffer2Window PROC
+	Buffer2Window PROC uses eax ebx ecx edx esi edi 
 		LOCAL ps:PAINTSTRUCT
 		LOCAL hdc:dword ;屏幕的hdc 全称是handle device context
 		LOCAL hdc1:dword;缓冲区1
@@ -758,7 +735,7 @@ include resource.inc
 	;------------------------------------------
 	; UpdateActionBmp - 更新动作bmp的句柄
 	;------------------------------------------
-	UpdateActionBmp PROC
+	UpdateActionBmp PROC uses eax ebx ecx edx esi edi 
 		mov edi, offset surfers
 		mov esi, player_action
 		imul esi, TYPE SurferHandle
@@ -780,7 +757,7 @@ include resource.inc
 	; @param wParam:WPARAM
 	; @return void
 	;------------------------------------------
-	PlayerAction PROC wParam:WPARAM
+	PlayerAction PROC uses eax ebx ecx edx esi edi wParam:WPARAM 
 		.if wParam==VK_LEFT
 			.if player_action > 1 && player_action < 6
 				.if player_action > 3
@@ -815,7 +792,6 @@ include resource.inc
 				.endif
 			.endif
 		.elseif wParam==VK_UP
-			; 这里应该是00才对的之后导入资源的时候再改
 			mov eax, 0
 			mov player_action, eax
 		.endif
@@ -824,58 +800,55 @@ include resource.inc
 	PlayerAction ENDP
 
 	;------------------------------------------
-	; UpdateSurfBoard - 更新surfB的句柄
+	; UpdateAniTimer - 更新动画的计时器
 	; @param
 	; @return void
 	;------------------------------------------
-	UpdateSurfBoard PROC
-		inc surfBtimer
-		mov eax, surfBtimer
+	UpdateAniTimer PROC uses eax ebx ecx edx esi edi 
+		inc aniTimer
+		mov eax, aniTimer
 		mov edx, 0    ; 清零edx，因为div指令会使用edx:eax作为被除数
 		mov ecx, 3    ; 将3放入ecx，作为除数
 		div ecx       ; 执行除法操作，eax = edx:eax / ecx，edx = edx:eax % ecx
-		mov surfBtimer, edx  ; 将余数（%结果）放回surfBtimer
+		mov aniTimer, edx  ; 将余数（%结果）放回surfBtimer
+		ret
+	UpdateAniTimer ENDP
 
-		.if surfBtimer == 0
-			mov edi, offset surfBoardAni
-			mov esi, player_action
-			imul esi, TYPE SurfBoardHandle
-			add edi, esi
-
+	;------------------------------------------
+	; UpdateSurfBoardAni - 更新surfB的句柄
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateSurfBoardAni PROC uses eax ebx ecx edx esi edi 
+		mov edi, offset surfBoardAni
+		mov esi, player_action
+		imul esi, TYPE SurfBoardHandle
+		add edi, esi
+		.if aniTimer == 0
 			mov eax, (SurfBoardHandle PTR [edi]).SurfB0
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM0
 			mov hBmpSurfBM, eax
-		.elseif surfBtimer == 1
-			mov edi, offset surfBoardAni
-			mov esi, player_action
-			imul esi, TYPE SurfBoardHandle
-			add edi, esi
-
+		.elseif aniTimer == 1
 			mov eax, (SurfBoardHandle PTR [edi]).SurfB1
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM1
 			mov hBmpSurfBM, eax
-		.elseif surfBtimer == 2
-			mov edi, offset surfBoardAni
-			mov esi, player_action
-			imul esi, TYPE SurfBoardHandle
-			add edi, esi
-
+		.elseif aniTimer == 2
 			mov eax, (SurfBoardHandle PTR [edi]).SurfB2
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM2
 			mov hBmpSurfBM, eax
 		.endif
 		ret
-	UpdateSurfBoard ENDP
+	UpdateSurfBoardAni ENDP
 
 	;------------------------------------------
 	; RenderWater - 绘制水面
 	; @param
 	; @return void
 	;------------------------------------------
-	RenderWater PROC
+	RenderWater PROC uses eax ebx ecx edx esi edi 
 
 		; 画水面
 		; -------------
@@ -925,7 +898,7 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	UpdateSpeed PROC
+	UpdateSpeed PROC uses eax ebx ecx edx esi edi 
 		mov eax, 0
 		mov ecx, 0
 		.if player_action == 0 || player_action == 6 || player_action == 7 || player_action == 8
@@ -961,7 +934,7 @@ include resource.inc
 	; @param
 	; @return void
 	;------------------------------------------
-	UpdateWater PROC
+	UpdateWater PROC uses eax ebx ecx edx esi edi 
 		mov eax, water.x
 		mov ecx, water.y
 		add eax, speed.x
@@ -979,12 +952,114 @@ include resource.inc
 		jg Update3
 		mov ecx, -84
 		Update3:
-
 		mov water.x, eax 
 		mov water.y, ecx
 		ret
 	UpdateWater ENDP
 
+	;------------------------------------------
+	; GenerateSlowD - 生成slowdown
+	; @param
+	; @return void
+	;------------------------------------------
+	GenerateSlowD PROC uses eax ebx ecx edx esi edi 
+		.if slowdInterval == 0
+			; 获得最新的一个Slowd
+			mov edi, offset slowdownPos
+			mov esi, slowdCount
+			imul esi, TYPE PosSlowdown
+			add edi, esi
+
+			; 生成多个slowdown
+			mov esi, 0
+			.while esi < 3 ; 生成2个
+				mov (PosSlowdown PTR [edi]).y, 700
+				invoke GetRandom, 0, 11
+				shl eax, 6
+				.if player_action == 3
+					mov ecx, 16
+				.elseif player_action == 1 || player_action == 2
+					mov ecx, -752
+				.elseif player_action == 4 || player_action == 5
+					mov ecx, 768
+				.endif
+				add ecx, eax
+				mov (PosSlowdown PTR [edi]).x, ecx
+				inc slowdCount
+				add edi, TYPE PosSlowdown
+				inc esi
+			.endw
+
+			invoke GetRandom, 15, 20
+			mov slowdInterval, eax
+		.else
+			dec slowdInterval
+		.endif
+		ret
+	GenerateSlowD ENDP
+
+	;------------------------------------------
+	; UpdateSlowD - 更新slowdown的位置
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateSlowD PROC uses eax ebx ecx edx esi edi 
+		mov edi, offset slowdownPos
+		mov esi, 0
+		.while esi < slowdCount
+			mov eax, (PosSlowdown PTR [edi]).x
+			mov ecx, (PosSlowdown PTR [edi]).y
+			add eax, speed.x
+			add ecx, speed.y
+			; 这里暂时不做回收机制
+			mov (PosSlowdown PTR [edi]).x, eax
+			mov (PosSlowdown PTR [edi]).y, ecx
+			add edi, TYPE PosSlowdown
+			inc esi
+		.endw
+		ret
+	UpdateSlowD ENDP
+
+	;------------------------------------------
+	; RenderSlowd - 绘制slowdown
+	; @param
+	; @return void
+	;------------------------------------------
+	RenderSlowd PROC uses eax ebx ecx edx esi edi 
+		mov edi, offset slowdownPos
+		mov esi, 0
+		; 暂时先只是加载一张图片
+		.while esi < slowdCount
+			invoke Bmp2Buffer, hBmpSlowd, (PosSlowdown PTR [edi]).x, (PosSlowdown PTR [edi]).y, 64, 64, SRCPAINT
+			add edi, TYPE PosSlowdown
+			inc esi
+		.endw
+		ret
+	RenderSlowd ENDP
+
+	;------------------------------------------
+	; UpdateSlowdAni - 更新slowdown的动画
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateSlowdAni PROC uses eax ebx ecx edx esi edi 
+		; 暂时只是更新一个的动画
+		mov edi, offset slowdownAni
+		mov esi, 0
+		imul esi, TYPE SlowdownHandle
+		add edi, esi
+		.if aniTimer == 0
+			mov eax, (SlowdownHandle PTR [edi]).SlowD0
+			mov hBmpSlowd, eax
+		.elseif aniTimer == 1
+			mov eax, (SlowdownHandle PTR [edi]).SlowD1
+			mov hBmpSlowd, eax
+		.elseif aniTimer == 2
+			mov eax, (SlowdownHandle PTR [edi]).SlowD2
+			mov hBmpSlowd, eax
+		.endif
+		ret
+	UpdateSlowdAni ENDP
 
 	;------------------------------------------
 	; WndProc - Window procedure
@@ -1009,7 +1084,11 @@ include resource.inc
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke RenderWater
+			; invoke RenderWater
+			invoke RenderSlowd
+			
+			invoke Bmp2Buffer, hBmpSlowd, 0, 0, 64, 64, SRCPAINT
+			
 			; 400 - 32 = 368
 			; 300 - 32 = 268
 			; 268 - 32 = 236
@@ -1022,8 +1101,13 @@ include resource.inc
 		.elseif uMsg ==WM_TIMER ;刷新
 			invoke InvalidateRect,hWnd,NULL,FALSE
 			invoke UpdateSpeed
-			invoke UpdateSurfBoard
-			invoke UpdateWater
+			invoke UpdateAniTimer
+			invoke UpdateSurfBoardAni
+			invoke UpdateSlowdAni
+			; invoke UpdateWater
+			invoke GenerateSlowD
+			invoke UpdateSlowD
+			
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		
 			ret
