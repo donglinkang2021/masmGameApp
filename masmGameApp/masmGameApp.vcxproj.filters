@@ -360,6 +360,87 @@
     <Image Include="source\water768.bmp">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="source\slowdown64\slowdown_0_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_0_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_1_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_0.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_1.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_3.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_4.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_5.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_6.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_7.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="source\slowdown64\slowdown_2_8.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="resource.inc">

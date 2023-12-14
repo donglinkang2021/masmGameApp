@@ -111,12 +111,39 @@
 #define IDB_WATER                       207
 #define IDB_WATERLG                     208
 #define IDB_WATERMD                     209
+#define IDB_SLOWD00 210
+#define IDB_SLOWD01 211
+#define IDB_SLOWD02 212
+#define IDB_SLOWD03 213
+#define IDB_SLOWD04 214
+#define IDB_SLOWD05 215
+#define IDB_SLOWD06 216
+#define IDB_SLOWD07 217
+#define IDB_SLOWD08 218
+#define IDB_SLOWD10 219
+#define IDB_SLOWD11 220
+#define IDB_SLOWD12 221
+#define IDB_SLOWD13 222
+#define IDB_SLOWD14 223
+#define IDB_SLOWD15 224
+#define IDB_SLOWD16 225
+#define IDB_SLOWD17 226
+#define IDB_SLOWD18 227
+#define IDB_SLOWD20 228
+#define IDB_SLOWD21 229
+#define IDB_SLOWD22 230
+#define IDB_SLOWD23 231
+#define IDB_SLOWD24 232
+#define IDB_SLOWD25 233
+#define IDB_SLOWD26 234
+#define IDB_SLOWD27 235
+#define IDB_SLOWD28 236
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        210
+#define _APS_NEXT_RESOURCE_VALUE        237
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
