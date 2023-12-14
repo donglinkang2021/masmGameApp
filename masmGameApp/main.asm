@@ -32,7 +32,7 @@ include resource.inc
 	; 2 起飞 翻滚开始动作
 	; 3 落水
 	; 4 站着
-	player_state dword 2
+	player_state dword 0
 
 	; 如果这一段放在.data?里面，那么在调用的时候会出现错误
 	PosWater struct
@@ -601,7 +601,7 @@ include resource.inc
 		.elseif wParam==VK_DOWN
 			.if player_state == 0
 				mov eax, 3
-				mov player_state, eax
+				mov player_action, eax
 			.elseif player_state == 2
 				.if player_action < 6
 					mov eax, 9
@@ -791,10 +791,13 @@ include resource.inc
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
 			invoke RenderWater
-			invoke Bmp2Buffer, hBmpSurfBM, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpSurfB, 368, 268, 64, 64, SRCPAINT
-			invoke Bmp2Buffer, hBmpPlayerM, 368, 268, 64, 64, SRCAND
-			invoke Bmp2Buffer, hBmpPlayer, 368, 268, 64, 64, SRCPAINT
+			; 400 - 32 = 368
+			; 300 - 32 = 268
+			; 268 - 32 = 236
+			invoke Bmp2Buffer, hBmpSurfBM, 368, 236, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpSurfB, 368, 236, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, hBmpPlayerM, 368, 236, 64, 64, SRCAND
+			invoke Bmp2Buffer, hBmpPlayer, 368, 236, 64, 64, SRCPAINT
 			
 			invoke Buffer2Window
 		.elseif uMsg ==WM_TIMER ;刷新
@@ -837,7 +840,7 @@ include resource.inc
 				offset MyWinClass,\	;窗口的类名
 				offset AppName,\	;窗口的标题
 				WS_OVERLAPPEDWINDOW,\
-				100,100,800,600,\	;窗口的位置和大小
+				100,100,800,700,\	;窗口的位置和大小
 				NULL,NULL,hInstance,NULL
 		mov	hWinMain,eax
 		invoke ShowWindow, hWinMain, SW_SHOWDEFAULT 
