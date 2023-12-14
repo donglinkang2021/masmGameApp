@@ -81,6 +81,18 @@ include resource.inc
 
 	surfBoardAni SurfBoardHandle 13 dup(<?,?,?,?,?,?>)
 
+	; 添加slowdown及其动画
+	SlowdownHandle struct
+		SlowD0 dd ?
+		SlowDM0 dd ?
+		SlowD1 dd ?
+		SlowDM1 dd ?
+		SlowD2 dd ?
+		SlowDM2 dd ?
+	SlowdownHandle ends
+
+	slowdownAni SlowdownHandle 9 dup(<?,?,?,?,?,?>)
+
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
 		x dd ? 		;位图x坐标
@@ -95,18 +107,12 @@ include resource.inc
 .code
 
 	;------------------------------------------
-	; LoadAllBmp - 加载所有的图片
+	; LoadSurfer - 加载surfer的图片
 	; @param
 	; @return void
 	;------------------------------------------
-	LoadAllBmp PROC
-		invoke LoadBitmap, hInstance, IDB_BACK
-		mov hBmpBack, eax
-		invoke LoadBitmap, hInstance, IDB_WATERMD
-		mov hBmpWater, eax
-
+	LoadSurfer PROC
 		mov edi, offset surfers
-
 		invoke LoadBitmap, hInstance, IDB_PLAYER00
 		mov (SurferHandle PTR [edi]).Player, eax
 		invoke LoadBitmap, hInstance, IDB_PLAYERM00
@@ -236,19 +242,15 @@ include resource.inc
 		invoke LoadBitmap, hInstance, IDB_SURFBM012
 		mov (SurferHandle PTR [edi]).SurfBM, eax
 		add edi, TYPE SurferHandle
+		ret
+	LoadSurfer ENDP
 
-		; 初始化player和surfB的图片
-		mov edi, offset surfers
-		mov eax, (SurferHandle PTR [edi]).Player
-		mov hBmpPlayer, eax
-		mov eax, (SurferHandle PTR [edi]).PlayerM
-		mov hBmpPlayerM, eax
-		mov eax, (SurferHandle PTR [edi]).SurfB
-		mov hBmpSurfB, eax
-		mov eax, (SurferHandle PTR [edi]).SurfBM
-		mov hBmpSurfBM, eax
-
-		; 初始化surfBoard的图片
+	;------------------------------------------
+	; LoadSurfboard - 加载surfboard的图片
+	; @param
+	; @return void
+	;------------------------------------------
+	LoadSurfboard PROC
 		mov edi, offset surfBoardAni
 		invoke LoadBitmap, hInstance, IDB_SURFB00
 		mov (SurfBoardHandle PTR [edi]).SurfB0, eax
@@ -431,6 +433,175 @@ include resource.inc
 		invoke LoadBitmap, hInstance, IDB_SURFBM212
 		mov (SurfBoardHandle PTR [edi]).SurfBM2, eax
 		add edi, TYPE SurfBoardHandle
+		ret
+	LoadSurfboard ENDP
+
+	;------------------------------------------
+	; LoadSlowdown - 加载slowdown的图片
+	; @param
+	; @return void
+	;------------------------------------------
+	LoadSlowdown PROC
+		mov edi, offset slowdownAni
+		invoke LoadBitmap, hInstance, IDB_SLOWD00
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM00
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD10
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM10
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD20
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM20
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD01
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM01
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD11
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM11
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD21
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM21
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD02
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM02
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD12
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM12
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD22
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM22
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD03
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM03
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD13
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM13
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD23
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM23
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD04
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM04
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD14
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM14
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD24
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM24
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD05
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM05
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD15
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM15
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD25
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM25
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD06
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM06
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD16
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM16
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD26
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM26
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD07
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM07
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD17
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM17
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD27
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM27
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+
+		invoke LoadBitmap, hInstance, IDB_SLOWD08
+		mov (SlowdownHandle PTR [edi]).SlowD0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM08
+		mov (SlowdownHandle PTR [edi]).SlowDM0, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD18
+		mov (SlowdownHandle PTR [edi]).SlowD1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM18
+		mov (SlowdownHandle PTR [edi]).SlowDM1, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWD28
+		mov (SlowdownHandle PTR [edi]).SlowD2, eax
+		invoke LoadBitmap, hInstance, IDB_SLOWDM28
+		mov (SlowdownHandle PTR [edi]).SlowDM2, eax
+		add edi, TYPE SlowdownHandle
+		ret
+	LoadSlowdown ENDP
+	
+	;------------------------------------------
+	; LoadAllBmp - 加载所有的图片
+	; @param
+	; @return void
+	;------------------------------------------
+	LoadAllBmp PROC
+		invoke LoadBitmap, hInstance, IDB_BACK
+		mov hBmpBack, eax
+		invoke LoadBitmap, hInstance, IDB_WATERMD
+		mov hBmpWater, eax
+
+		; 初始化surfer的图片
+		invoke LoadSurfer
+
+		; 初始化player和surfB的图片
+		mov edi, offset surfers
+		mov eax, (SurferHandle PTR [edi]).Player
+		mov hBmpPlayer, eax
+		mov eax, (SurferHandle PTR [edi]).PlayerM
+		mov hBmpPlayerM, eax
+		mov eax, (SurferHandle PTR [edi]).SurfB
+		mov hBmpSurfB, eax
+		mov eax, (SurferHandle PTR [edi]).SurfBM
+		mov hBmpSurfBM, eax
+
+		; 初始化surfBoard的图片
+		invoke LoadSurfboard
+
+		; 初始化slowdown的图片
+		invoke LoadSlowdown
+		
 		
 		ret
 	LoadAllBmp ENDP
@@ -452,6 +623,30 @@ include resource.inc
 			invoke DeleteObject, (SurferHandle PTR [edi]).SurfB
 			invoke DeleteObject, (SurferHandle PTR [edi]).SurfBM
 			add edi, TYPE SurferHandle
+			inc esi
+		.endw
+		mov edi, offset surfBoardAni
+		mov esi, 0
+		.while esi < 13
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfB0
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfBM0
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfB1
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfBM1
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfB2
+			invoke DeleteObject, (SurfBoardHandle PTR [edi]).SurfBM2
+			add edi, TYPE SurfBoardHandle
+			inc esi
+		.endw
+		mov edi, offset slowdownAni
+		mov esi, 0
+		.while esi < 9
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD0
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM0
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD1
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM1
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowD2
+			invoke DeleteObject, (SlowdownHandle PTR [edi]).SlowDM2
+			add edi, TYPE SlowdownHandle
 			inc esi
 		.endw
 		ret
