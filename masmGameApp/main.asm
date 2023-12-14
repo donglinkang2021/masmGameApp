@@ -11,6 +11,10 @@ include gdi32.inc
 includelib gdi32.lib
 include resource.inc
 
+
+.const
+	MyWinClass   db "Simple Win Class",0
+	AppName      db "My First Window",0
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
 	freshTime dword 32		;刷新时间，以毫秒为单位
@@ -29,7 +33,19 @@ include resource.inc
 	; 3 落水
 	; 4 站着
 	player_state dword 2
-	
+
+	; 如果这一段放在.data?里面，那么在调用的时候会出现错误
+	PosWater struct
+		x dd ?
+		y dd ?
+	PosWater ends
+	water PosWater <16,-84>
+
+	; 用于控制surfB的动画
+	surfBtimer dword 0
+
+	;当前已经加载的图片的数量
+	itemsCount dd 0	
 
 .data?
 	hInstance dword ? 	;程序的句柄
@@ -43,13 +59,6 @@ include resource.inc
 	hBmpPlayerM dd ?	;当前玩家图片的句柄
 	hBmpSurfB dd ?		;当前玩家图片的句柄
 	hBmpSurfBM dd ?		;当前玩家图片的句柄
-
-	PosWater struct
-		x dd ?
-		y dd ?
-	PosWater ends
-
-	water PosWater <-112,-212>
 
 	SurferHandle struct
 		Player dd ?	
@@ -71,7 +80,6 @@ include resource.inc
 	SurfBoardHandle ends
 
 	surfBoardAni SurfBoardHandle 13 dup(<?,?,?,?,?,?>)
-	surfBtimer dword 0
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -82,11 +90,7 @@ include resource.inc
 		flag dd ?	;位图的展示方式
 	ITEMBMP ends
 	items ITEMBMP 4096 dup(<?,?,?,?,?,?>)
-	itemsCount dd 0	;当前已经加载的图片的数量
 
-.const
-	MyWinClass   db "Simple Win Class",0
-	AppName      db "My First Window",0
 	
 .code
 
@@ -98,7 +102,7 @@ include resource.inc
 	LoadAllBmp PROC
 		invoke LoadBitmap, hInstance, IDB_BACK
 		mov hBmpBack, eax
-		invoke LoadBitmap, hInstance, IDB_WATERLG
+		invoke LoadBitmap, hInstance, IDB_WATERMD
 		mov hBmpWater, eax
 
 		mov edi, offset surfers
@@ -666,6 +670,56 @@ include resource.inc
 	UpdateSurfBoard ENDP
 
 	;------------------------------------------
+	; RenderWater - 绘制水面
+	; @param
+	; @return void
+	;------------------------------------------
+	RenderWater PROC
+
+		; 画水面
+		; -------------
+		; | 0 | 1 | 2 |
+		; -------------
+		; | 3 | 4 | 5 |
+		; -------------
+		; | 6 | 7 | 8 |
+		; -------------
+
+		; 画水面4
+		invoke Bmp2Buffer, hBmpWater, water.x, water.y, 768, 768, SRCPAINT
+		
+		; 画水面7
+		mov eax, water.y
+		add eax, 768
+		invoke Bmp2Buffer, hBmpWater, water.x, eax, 768, 768, SRCPAINT
+
+		; 画水面3
+		mov eax, water.x
+		sub eax, 768
+		invoke Bmp2Buffer, hBmpWater, eax, water.y, 768, 768, SRCPAINT
+
+		; 画水面5
+		mov eax, water.x
+		add eax, 768
+		invoke Bmp2Buffer, hBmpWater, eax, water.y, 768, 768, SRCPAINT
+
+		; 画水面6
+		mov eax, water.x
+		sub eax, 768
+		mov ecx, water.y
+		add ecx, 768
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 768, 768, SRCPAINT
+
+		; 画水面8
+		mov eax, water.x
+		add eax, 768
+		mov ecx, water.y
+		add ecx, 768
+		invoke Bmp2Buffer, hBmpWater, eax, ecx, 768, 768, SRCPAINT
+		ret
+	RenderWater ENDP
+	
+	;------------------------------------------
 	; UpdateWater - 更新波浪的位置
 	; @param
 	; @return void
@@ -694,12 +748,18 @@ include resource.inc
 		.endif
 
 		; 循环恢复
-		.if eax < -368
-			mov eax, -112
-		.endif
-		.if ecx < -468
-			mov ecx, -212
-		.endif
+		cmp eax, -752 ; x0 - 768 = 16 - 768
+		jg Update1
+		mov eax, 16
+		Update1:
+		cmp eax, 784 ; x0 + 768 = 16 + 768
+		jl Update2
+		mov eax, 16
+		Update2:
+		cmp ecx, -852 ; y0 - 768 = -84 - 768
+		jg Update3
+		mov ecx, -84
+		Update3:
 
 		mov water.x, eax 
 		mov water.y, ecx
@@ -730,7 +790,7 @@ include resource.inc
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke Bmp2Buffer, hBmpWater, water.x, water.y, 1024, 1024, SRCPAINT
+			invoke RenderWater
 			invoke Bmp2Buffer, hBmpSurfBM, 368, 268, 64, 64, SRCAND
 			invoke Bmp2Buffer, hBmpSurfB, 368, 268, 64, 64, SRCPAINT
 			invoke Bmp2Buffer, hBmpPlayerM, 368, 268, 64, 64, SRCAND

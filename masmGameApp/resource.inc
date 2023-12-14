@@ -107,3 +107,4 @@
     IDB_SURFBM212 equ 206
     IDB_WATER equ 207
     IDB_WATERLG equ 208
+    IDB_WATERMD equ 209

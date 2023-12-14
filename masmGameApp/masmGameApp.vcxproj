@@ -251,6 +251,7 @@
     <Image Include="source\water1024.bmp" />
     <Image Include="source\water256.bmp" />
     <Image Include="source\water256_mask.bmp" />
+    <Image Include="source\water768.bmp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resource.inc" />
