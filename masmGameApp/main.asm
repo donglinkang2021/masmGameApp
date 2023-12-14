@@ -41,6 +41,13 @@ include resource.inc
 	PosWater ends
 	water PosWater <16,-84>
 
+	; 添加相对速度，因为到时候所有物体速度都是一样的
+	RelSpeed struct
+		x dd ?
+		y dd ?
+	RelSpeed ends
+	speed RelSpeed <0,0>
+
 	; 用于控制surfB的动画
 	surfBtimer dword 0
 
@@ -602,7 +609,6 @@ include resource.inc
 		; 初始化slowdown的图片
 		invoke LoadSlowdown
 		
-		
 		ret
 	LoadAllBmp ENDP
 
@@ -915,15 +921,16 @@ include resource.inc
 	RenderWater ENDP
 	
 	;------------------------------------------
-	; UpdateWater - 更新波浪的位置
+	; UpdateSpeed - 改变速度
 	; @param
 	; @return void
 	;------------------------------------------
-	UpdateWater PROC
-		mov eax, water.x
-		mov ecx, water.y
+	UpdateSpeed PROC
+		mov eax, 0
+		mov ecx, 0
 		.if player_action == 0 || player_action == 6 || player_action == 7 || player_action == 8
-			
+			mov eax, 0
+			mov ecx, 0
 		.elseif player_action == 1
 			add eax, 14
 			sub ecx, 14
@@ -932,6 +939,9 @@ include resource.inc
 			sub ecx, 16
 		.elseif player_action == 3
 			sub ecx, 20
+			.if player_state == 1
+				mov ecx, 32
+			.endif
 		.elseif player_action == 4
 			sub eax, 8
 			sub ecx, 16
@@ -941,7 +951,21 @@ include resource.inc
 		.else
 			sub ecx, 32
 		.endif
-
+		mov speed.x, eax
+		mov speed.y, ecx
+		ret
+	UpdateSpeed ENDP
+	
+	;------------------------------------------
+	; UpdateWater - 更新波浪的位置
+	; @param
+	; @return void
+	;------------------------------------------
+	UpdateWater PROC
+		mov eax, water.x
+		mov ecx, water.y
+		add eax, speed.x
+		add ecx, speed.y
 		; 循环恢复
 		cmp eax, -752 ; x0 - 768 = 16 - 768
 		jg Update1
@@ -997,6 +1021,7 @@ include resource.inc
 			invoke Buffer2Window
 		.elseif uMsg ==WM_TIMER ;刷新
 			invoke InvalidateRect,hWnd,NULL,FALSE
+			invoke UpdateSpeed
 			invoke UpdateSurfBoard
 			invoke UpdateWater
 		.else
