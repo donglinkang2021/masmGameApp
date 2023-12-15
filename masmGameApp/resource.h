@@ -138,39 +138,12 @@
 #define IDB_SLOWD26                     234
 #define IDB_SLOWD27                     235
 #define IDB_SLOWD28                     236
-#define IDB_SLOWDM00 237
-#define IDB_SLOWDM01 238
-#define IDB_SLOWDM02 239
-#define IDB_SLOWDM03 240
-#define IDB_SLOWDM04 241
-#define IDB_SLOWDM05 242
-#define IDB_SLOWDM06 243
-#define IDB_SLOWDM07 244
-#define IDB_SLOWDM08 245
-#define IDB_SLOWDM10 246
-#define IDB_SLOWDM11 247
-#define IDB_SLOWDM12 248
-#define IDB_SLOWDM13 249
-#define IDB_SLOWDM14 250
-#define IDB_SLOWDM15 251
-#define IDB_SLOWDM16 252
-#define IDB_SLOWDM17 253
-#define IDB_SLOWDM18 254
-#define IDB_SLOWDM20 255
-#define IDB_SLOWDM21 256
-#define IDB_SLOWDM22 257
-#define IDB_SLOWDM23 258
-#define IDB_SLOWDM24 259
-#define IDB_SLOWDM25 260
-#define IDB_SLOWDM26 261
-#define IDB_SLOWDM27 262
-#define IDB_SLOWDM28 263
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        264
+#define _APS_NEXT_RESOURCE_VALUE        237
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
