@@ -1018,6 +1018,29 @@ rand	proto C
 	GenerateSlowD ENDP
 
 	;------------------------------------------
+	; GetSlowdAniHandle - 获得slowdown的动画句柄
+	; @param
+	; @return void
+	;------------------------------------------
+	GetSlowdAniHandle PROC uses ebx ecx edx esi edi tp:DWORD
+		; 暂时只是更新一个的动画
+		mov edi, offset slowdownAni
+		mov esi, tp
+		imul esi, TYPE SlowdownHandle
+		add edi, esi
+		.if aniTimer == 0
+			mov eax, (SlowdownHandle PTR [edi]).SlowD0
+		.elseif aniTimer == 8
+			mov eax, (SlowdownHandle PTR [edi]).SlowD1
+		.elseif aniTimer == 16
+			mov eax, (SlowdownHandle PTR [edi]).SlowD2
+		.else
+			mov eax, hBmpSlowd ; 否则等于之前的帧
+		.endif
+		ret
+	GetSlowdAniHandle ENDP
+	
+	;------------------------------------------
 	; UpdateSlowD - 更新slowdown的位置
 	; @param
 	; @return void
@@ -1037,22 +1060,9 @@ rand	proto C
 			inc esi
 		.endw
 
-		; 暂时只是更新一个的动画
-		mov edi, offset slowdownAni
-		mov esi, 1
-		imul esi, TYPE SlowdownHandle
-		add edi, esi
-		.if aniTimer == 0
-			mov eax, (SlowdownHandle PTR [edi]).SlowD0
-			mov hBmpSlowd, eax
-		.elseif aniTimer == 8
-			mov eax, (SlowdownHandle PTR [edi]).SlowD1
-			mov hBmpSlowd, eax
-		.elseif aniTimer == 16
-			mov eax, (SlowdownHandle PTR [edi]).SlowD2
-			mov hBmpSlowd, eax
-		.endif
-
+		invoke GetSlowdAniHandle, 0
+		mov hBmpSlowd, eax
+		xor eax, eax
 		ret
 	UpdateSlowD ENDP
 
