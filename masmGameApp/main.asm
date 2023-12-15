@@ -109,8 +109,10 @@ rand	proto C
 	PosSlowdown struct
 		x dd ?
 		y dd ?
+		tp dd ?
+		hBmp dd ?
 	PosSlowdown ends
-	slowdownPos PosSlowdown 16 dup(<?,?>)
+	slowdownPos PosSlowdown 16 dup(<?,?,?,?>)
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -1000,6 +1002,13 @@ rand	proto C
 		; 生成一个slowdown
 		; mov esi, 0
 		; .while esi < 3 ; 生成2个
+			invoke GetRandom, 0, 8
+			mov (PosSlowdown PTR [edi]).tp, eax
+			imul eax, TYPE SlowdownHandle
+			mov ebx, offset slowdownAni
+			add ebx, eax
+			mov eax, (SlowdownHandle PTR [ebx]).SlowD0
+			mov (PosSlowdown PTR [edi]).hBmp, eax
 			mov (PosSlowdown PTR [edi]).y, 700
 			invoke GetRandPosX
 			mov (PosSlowdown PTR [edi]).x, eax
@@ -1022,7 +1031,7 @@ rand	proto C
 	; @param
 	; @return void
 	;------------------------------------------
-	GetSlowdAniHandle PROC uses ebx ecx edx esi edi tp:DWORD
+	GetSlowdAniHandle PROC uses ebx ecx edx esi edi tp:DWORD, hBmp:DWORD
 		; 暂时只是更新一个的动画
 		mov edi, offset slowdownAni
 		mov esi, tp
@@ -1035,7 +1044,7 @@ rand	proto C
 		.elseif aniTimer == 16
 			mov eax, (SlowdownHandle PTR [edi]).SlowD2
 		.else
-			mov eax, hBmpSlowd ; 否则等于之前的帧
+			mov eax, hBmp ; 否则等于之前的帧
 		.endif
 		ret
 	GetSlowdAniHandle ENDP
@@ -1056,11 +1065,13 @@ rand	proto C
 			; 这里暂时不做回收机制
 			mov (PosSlowdown PTR [edi]).x, eax
 			mov (PosSlowdown PTR [edi]).y, ecx
+			invoke GetSlowdAniHandle, (PosSlowdown PTR [edi]).tp, (PosSlowdown PTR [edi]).hBmp
+			mov (PosSlowdown PTR [edi]).hBmp, eax
 			add edi, TYPE PosSlowdown
 			inc esi
 		.endw
 
-		invoke GetSlowdAniHandle, 0
+		invoke GetSlowdAniHandle, 0, hBmpSlowd
 		mov hBmpSlowd, eax
 		xor eax, eax
 		ret
@@ -1076,7 +1087,7 @@ rand	proto C
 		mov esi, 0
 		; 暂时先只是加载一张图片
 		.while esi < slowdCount
-			invoke Bmp2Buffer, hBmpSlowd, (PosSlowdown PTR [edi]).x, (PosSlowdown PTR [edi]).y, 64, 64, SRCPAINT
+			invoke Bmp2Buffer, (PosSlowdown PTR [edi]).hBmp, (PosSlowdown PTR [edi]).x, (PosSlowdown PTR [edi]).y, 64, 64, SRCPAINT
 			add edi, TYPE PosSlowdown
 			inc esi
 		.endw
