@@ -19,7 +19,7 @@ rand	proto C
 	AppName      db "Surf",0
 .data
 	stRect RECT <0,0,0,0>	;客户窗口的大小，right代表长，bottom代表高
-	freshTime dword 64		;刷新时间，以毫秒为单位
+	freshTime dword 16		;刷新时间，以毫秒为单位 帧率60
 
 	; player_action
 	; 0 ~ 5 原地, 左左, 左, 中, 右, 右右
@@ -808,7 +808,7 @@ rand	proto C
 		inc aniTimer
 		mov eax, aniTimer
 		mov edx, 0    ; 清零edx，因为div指令会使用edx:eax作为被除数
-		mov ecx, 3    ; 将3放入ecx，作为除数
+		mov ecx, 24    ; 放入ecx，作为除数
 		div ecx       ; 执行除法操作，eax = edx:eax / ecx，edx = edx:eax % ecx
 		mov aniTimer, edx  ; 将余数（%结果）放回surfBtimer
 		ret
@@ -829,12 +829,12 @@ rand	proto C
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM0
 			mov hBmpSurfBM, eax
-		.elseif aniTimer == 1
+		.elseif aniTimer == 8
 			mov eax, (SurfBoardHandle PTR [edi]).SurfB1
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM1
 			mov hBmpSurfBM, eax
-		.elseif aniTimer == 2
+		.elseif aniTimer == 16
 			mov eax, (SurfBoardHandle PTR [edi]).SurfB2
 			mov hBmpSurfB, eax
 			mov eax, (SurfBoardHandle PTR [edi]).SurfBM2
@@ -905,24 +905,24 @@ rand	proto C
 			mov eax, 0
 			mov ecx, 0
 		.elseif player_action == 1
-			add eax, 14
-			sub ecx, 14
+			add eax, 3
+			sub ecx, 3
 		.elseif player_action == 2
-			add eax, 8
-			sub ecx, 16
+			add eax, 2
+			sub ecx, 4
 		.elseif player_action == 3
-			sub ecx, 20
+			sub ecx, 5
 			.if player_state == 1
-				mov ecx, 32
+				mov ecx, 8
 			.endif
 		.elseif player_action == 4
-			sub eax, 8
-			sub ecx, 16
+			sub eax, 2
+			sub ecx, 4
 		.elseif player_action == 5
-			sub eax, 14
-			sub ecx, 14
+			sub eax, 3
+			sub ecx, 3
 		.else
-			sub ecx, 32
+			sub ecx, 8
 		.endif
 		mov speed.x, eax
 		mov speed.y, ecx
@@ -1029,10 +1029,10 @@ rand	proto C
 		.if aniTimer == 0
 			mov eax, (SlowdownHandle PTR [edi]).SlowD0
 			mov hBmpSlowd, eax
-		.elseif aniTimer == 1
+		.elseif aniTimer == 8
 			mov eax, (SlowdownHandle PTR [edi]).SlowD1
 			mov hBmpSlowd, eax
-		.elseif aniTimer == 2
+		.elseif aniTimer == 16
 			mov eax, (SlowdownHandle PTR [edi]).SlowD2
 			mov hBmpSlowd, eax
 		.endif
@@ -1080,7 +1080,7 @@ rand	proto C
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			; invoke RenderWater
+			invoke RenderWater
 			invoke RenderSlowd
 			
 			invoke Bmp2Buffer, hBmpSlowd, 0, 0, 64, 64, SRCPAINT
@@ -1099,7 +1099,7 @@ rand	proto C
 			invoke UpdateSpeed
 			invoke UpdateAniTimer
 			invoke UpdateSurfBoard
-			; invoke UpdateWater
+			invoke UpdateWater
 			invoke GenerateSlowD
 			invoke UpdateSlowD
 			
