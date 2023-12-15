@@ -815,11 +815,11 @@ rand	proto C
 	UpdateAniTimer ENDP
 
 	;------------------------------------------
-	; UpdateSurfBoardAni - 更新surfB的句柄
+	; UpdateSurfBoard - 更新surfB的句柄
 	; @param
 	; @return void
 	;------------------------------------------
-	UpdateSurfBoardAni PROC uses eax ebx ecx edx esi edi 
+	UpdateSurfBoard PROC uses eax ebx ecx edx esi edi 
 		mov edi, offset surfBoardAni
 		mov esi, player_action
 		imul esi, TYPE SurfBoardHandle
@@ -841,7 +841,7 @@ rand	proto C
 			mov hBmpSurfBM, eax
 		.endif
 		ret
-	UpdateSurfBoardAni ENDP
+	UpdateSurfBoard ENDP
 
 	;------------------------------------------
 	; RenderWater - 绘制水面
@@ -962,40 +962,43 @@ rand	proto C
 	; @param
 	; @return void
 	;------------------------------------------
-	GenerateSlowD PROC uses eax ebx ecx edx esi edi 
-		.if slowdInterval == 0
-			; 获得最新的一个Slowd
-			mov edi, offset slowdownPos
-			mov esi, slowdCount
-			imul esi, TYPE PosSlowdown
-			add edi, esi
+	GenerateSlowD PROC uses eax ebx ecx edx esi edi
+		cmp player_action, 0
+		je GenerateSlowdRet
+		cmp slowdInterval, 0
+		jne GenerateSlowdEnd
+		; 获得最新的一个Slowd
+		mov edi, offset slowdownPos
+		mov esi, slowdCount
+		imul esi, TYPE PosSlowdown
+		add edi, esi
 
-			; 生成多个slowdown
-			mov esi, 0
-			.while esi < 3 ; 生成2个
-				mov (PosSlowdown PTR [edi]).y, 700
-				invoke GetRandom, 0, 11
-				shl eax, 6
-				.if player_action == 3
-					mov ecx, 16
-				.elseif player_action == 1 || player_action == 2
-					mov ecx, -752
-				.elseif player_action == 4 || player_action == 5
-					mov ecx, 768
-				.endif
-				add ecx, eax
-				mov (PosSlowdown PTR [edi]).x, ecx
-				inc slowdCount
-				add edi, TYPE PosSlowdown
-				inc esi
-			.endw
+		; 生成多个slowdown
+		mov esi, 0
+		.while esi < 3 ; 生成2个
+			mov (PosSlowdown PTR [edi]).y, 700
+			invoke GetRandom, 0, 17
+			shl eax, 6
+			.if player_action == 3
+				mov ecx, -240
+			.elseif player_action == 1 || player_action == 2
+				mov ecx, -752
+			.elseif player_action == 4 || player_action == 5
+				mov ecx, 272
+			.endif
+			add ecx, eax
+			mov (PosSlowdown PTR [edi]).x, ecx
+			inc slowdCount
+			add edi, TYPE PosSlowdown
+			inc esi
+		.endw
 
-			invoke GetRandom, 15, 20
-			mov slowdInterval, eax
-		.else
+		invoke GetRandom, 5, 20
+		mov slowdInterval, eax
+		GenerateSlowdEnd:
 			dec slowdInterval
-		.endif
-		ret
+		GenerateSlowdRet:
+			ret
 	GenerateSlowD ENDP
 
 	;------------------------------------------
@@ -1017,6 +1020,23 @@ rand	proto C
 			add edi, TYPE PosSlowdown
 			inc esi
 		.endw
+
+		; 暂时只是更新一个的动画
+		mov edi, offset slowdownAni
+		mov esi, 1
+		imul esi, TYPE SlowdownHandle
+		add edi, esi
+		.if aniTimer == 0
+			mov eax, (SlowdownHandle PTR [edi]).SlowD0
+			mov hBmpSlowd, eax
+		.elseif aniTimer == 1
+			mov eax, (SlowdownHandle PTR [edi]).SlowD1
+			mov hBmpSlowd, eax
+		.elseif aniTimer == 2
+			mov eax, (SlowdownHandle PTR [edi]).SlowD2
+			mov hBmpSlowd, eax
+		.endif
+
 		ret
 	UpdateSlowD ENDP
 
@@ -1037,29 +1057,6 @@ rand	proto C
 		ret
 	RenderSlowd ENDP
 
-	;------------------------------------------
-	; UpdateSlowdAni - 更新slowdown的动画
-	; @param
-	; @return void
-	;------------------------------------------
-	UpdateSlowdAni PROC uses eax ebx ecx edx esi edi 
-		; 暂时只是更新一个的动画
-		mov edi, offset slowdownAni
-		mov esi, 0
-		imul esi, TYPE SlowdownHandle
-		add edi, esi
-		.if aniTimer == 0
-			mov eax, (SlowdownHandle PTR [edi]).SlowD0
-			mov hBmpSlowd, eax
-		.elseif aniTimer == 1
-			mov eax, (SlowdownHandle PTR [edi]).SlowD1
-			mov hBmpSlowd, eax
-		.elseif aniTimer == 2
-			mov eax, (SlowdownHandle PTR [edi]).SlowD2
-			mov hBmpSlowd, eax
-		.endif
-		ret
-	UpdateSlowdAni ENDP
 
 	;------------------------------------------
 	; WndProc - Window procedure
@@ -1079,7 +1076,6 @@ rand	proto C
 			invoke LoadAllBmp
 			invoke GetClientRect, hWnd, addr stRect
 			invoke SetTimer,hWnd,1,freshTime,NULL ; 开始计时
-			; 这里之后实现动态波浪移动
 		.elseif uMsg==WM_KEYDOWN
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
@@ -1102,8 +1098,7 @@ rand	proto C
 			invoke InvalidateRect,hWnd,NULL,FALSE
 			invoke UpdateSpeed
 			invoke UpdateAniTimer
-			invoke UpdateSurfBoardAni
-			invoke UpdateSlowdAni
+			invoke UpdateSurfBoard
 			; invoke UpdateWater
 			invoke GenerateSlowD
 			invoke UpdateSlowD
