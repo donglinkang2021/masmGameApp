@@ -58,7 +58,8 @@ rand	proto C
 
 	; 记录生成的slowdown的数量
 	slowdCount dd 0
-	slowdInterval dd 20 ; 用于控制slowdown的生成间隔
+	slowdInterval dd 20 ; 最开始时的生成间隔，80差不多应该，之后的生成间隔为随机数
+	MAXSLOWD dd 8 ; 最多生成的slowdown的数量
 
 .data?
 	hInstance dword ? 	;程序的句柄
@@ -109,7 +110,7 @@ rand	proto C
 		x dd ?
 		y dd ?
 	PosSlowdown ends
-	slowdownPos PosSlowdown 128 dup(<?,?>)
+	slowdownPos PosSlowdown 16 dup(<?,?>)
 
 	ITEMBMP struct
 		hbp dd ? 	;位图的句柄
@@ -958,11 +959,34 @@ rand	proto C
 	UpdateWater ENDP
 
 	;------------------------------------------
+	; GetRandPosX - 生成随机的X坐标 给障碍物用的
+	; @param
+	; @return void
+	;------------------------------------------
+	GetRandPosX PROC uses ebx ecx edx esi edi
+		invoke GetRandom, 0, 17
+		shl eax, 6
+		.if player_action == 3
+			mov ecx, -240
+		.elseif player_action == 1 || player_action == 2
+			mov ecx, -752
+		.elseif player_action == 4 || player_action == 5
+			mov ecx, 272
+		.endif
+		add ecx, eax
+		mov eax, ecx
+		ret
+	GetRandPosX ENDP
+	
+	;------------------------------------------
 	; GenerateSlowD - 生成slowdown
 	; @param
 	; @return void
 	;------------------------------------------
 	GenerateSlowD PROC uses eax ebx ecx edx esi edi
+		mov eax, slowdCount
+		cmp eax, MAXSLOWD
+		jg GenerateSlowdRet
 		cmp player_action, 0
 		je GenerateSlowdRet
 		cmp slowdInterval, 0
@@ -973,31 +997,23 @@ rand	proto C
 		imul esi, TYPE PosSlowdown
 		add edi, esi
 
-		; 生成多个slowdown
-		mov esi, 0
-		.while esi < 3 ; 生成2个
+		; 生成一个slowdown
+		; mov esi, 0
+		; .while esi < 3 ; 生成2个
 			mov (PosSlowdown PTR [edi]).y, 700
-			invoke GetRandom, 0, 17
-			shl eax, 6
-			.if player_action == 3
-				mov ecx, -240
-			.elseif player_action == 1 || player_action == 2
-				mov ecx, -752
-			.elseif player_action == 4 || player_action == 5
-				mov ecx, 272
-			.endif
-			add ecx, eax
-			mov (PosSlowdown PTR [edi]).x, ecx
+			invoke GetRandPosX
+			mov (PosSlowdown PTR [edi]).x, eax
 			inc slowdCount
-			add edi, TYPE PosSlowdown
-			inc esi
-		.endw
+			; add edi, TYPE PosSlowdown
+			; inc esi
+		; .endw
 
-		invoke GetRandom, 5, 20
+		invoke GetRandom, 20, 30
 		mov slowdInterval, eax
 		GenerateSlowdEnd:
 			dec slowdInterval
 		GenerateSlowdRet:
+			xor eax,eax
 			ret
 	GenerateSlowD ENDP
 
@@ -1057,6 +1073,31 @@ rand	proto C
 		ret
 	RenderSlowd ENDP
 
+	;------------------------------------------
+	; RecycleSlowd - 回收slowdown
+	; @param
+	; @return void
+	;------------------------------------------
+	RecycleSlowd PROC uses eax ebx ecx edx esi edi
+		; 双指针
+		mov edi, offset slowdownPos
+		xor esi, esi
+		.while esi < slowdCount
+			mov eax, (PosSlowdown PTR [edi]).y
+			add eax, 64
+			cmp eax, 0
+			jg RecycleSlowdEnd
+			; 开始回收，即重新生成
+			mov (PosSlowdown PTR [edi]).y, 700
+			invoke GetRandPosX
+			mov (PosSlowdown PTR [edi]).x, eax
+			RecycleSlowdEnd:
+			inc esi
+			add edi, TYPE PosSlowdown
+		.endw
+		xor eax,eax
+		ret
+	RecycleSlowd ENDP
 
 	;------------------------------------------
 	; WndProc - Window procedure
@@ -1080,7 +1121,7 @@ rand	proto C
 			invoke PlayerAction, wParam
 		.elseif uMsg == WM_PAINT
 			invoke Bmp2Buffer, hBmpBack, 0, 0, stRect.right, stRect.bottom, SRCCOPY
-			invoke RenderWater
+			; invoke RenderWater
 			invoke RenderSlowd
 			
 			invoke Bmp2Buffer, hBmpSlowd, 0, 0, 64, 64, SRCPAINT
@@ -1099,9 +1140,12 @@ rand	proto C
 			invoke UpdateSpeed
 			invoke UpdateAniTimer
 			invoke UpdateSurfBoard
-			invoke UpdateWater
+			; invoke UpdateWater
 			invoke GenerateSlowD
 			invoke UpdateSlowD
+			.if slowdCount > 2
+				invoke RecycleSlowd
+			.endif
 			
 		.else
 			invoke DefWindowProc, hWnd, uMsg, wParam, lParam		
